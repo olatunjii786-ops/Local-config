@@ -1,4 +1,4 @@
-from flask import Flask, request, Response, jsonify
+from flask import Flask, request, Response, jsonify, render_template_string
 import requests
 import json
 import logging
@@ -7,12 +7,12 @@ app = Flask(__name__)
 logging.basicConfig(level=logging.INFO)
 
 # ============================================================
-# USE HIS SERVER AS THE SOURCE
+# USE HIS SERVER AS THE SOURCE (keeps game working)
 # ============================================================
 SOURCE_URL = "https://niku-mods-proxy-1.onrender.com/ver.php"
 
 # ============================================================
-# USER PREFERENCES
+# YOUR USER PREFERENCES - These control YOUR features
 # ============================================================
 user_prefs = {
     "HS_NECK": True,
@@ -28,138 +28,107 @@ user_prefs = {
     "HIGH_SENSI": True
 }
 
-def build_clean_gamevar():
-    """Build a clean gamevar string with only the needed fields"""
+# ============================================================
+# BUILD YOUR FEATURES - This gets added to his config
+# ============================================================
+def build_features():
+    """Build the feature string to inject into his config"""
+    features = []
     
-    gamevar_lines = [
-        'var_name,comment,var_type,var_value',
-        'var_name,comment,"var_type float, int, bool",var_value',
-        'ANODisabledRegions,关闭MTP的地区,string,"IND,NA"',
-        'ANODisabledClientVariant,ANODisabledClientVariant,string,"ClientUsingVersion_MAX_HPE,ClientUsingVersion_FFI,ClientUsingVersion_MAX|IND,ClientUsingVersion_MAX|NA,ClientUsingVersion_NORMAL|NA"',
-        'EnableMtpLiteDataRegion,mtp轻特征开关,string,"BR,EUROPE,ID,ME,US,RU,SAC,SG,TH,TW,VN,PK,ZA,BD"',
-        'ANOEmulatorCheckDisbaledClientVariant,ANOEmulatorCheckDisbaledClientVariant,string,"ClientUsingVersion_FFI,ClientUsingVersion_MAX,ClientUsingVersion_NORMAL"',
-        'ForceTutorial_ChangeHudABTest,fps流程中打开hud选择界面的概率,float,-1',
-        '',
-        'CleanFFAntiState,CleanFFAntiState,bool,true,,',
-        'FFAntihackDefenceLevel,FFAntihackDefenceLevel,string,0,,',
-        'FFAntihackLightInitOnThread,FFAntihackLightInitOnThread,bool,false,,',
-        'FFAntihackEmulatorCheckDisbaledClientVariant,FFAntihackEmulatorCheckDisbaledClientVariant,string,,,',
-        'FFAntihackSDKDetailEncryptBySHA1,FFAntihackSDKDetailEncryptBySHA1,bool,false,,',
-        'EnableFFAntihackInfoExtra,EnableFFAntihackInfoExtra,bool,false,,',
-        'CheckHacker,CheckHacker,bool,false,,',
-        'DebugHack,DebugHack,bool,true,,',
-        'TestModeEnabled,TestModeEnabled,bool,true,,',
-        'EarlyInitGGP,EarlyInitGGP,bool,false,,',
-        'DisableGinInfoSend,DisableGinInfoSend,int,1,,',
-        'GinInfoBRAliveThreshold,GinInfoBRAliveThreshold,int,0,,',
-        'AntiHackResetSubgameInterval,AntiHackResetSubgameInterval,int,0,,',
-        'FFANTIHACKEXT_SPLIT_THRESHOLD,FFANTIHACKEXT_SPLIT_THRESHOLD,int,0,,',
-        'NeedProcessAH,NeedProcessAH,bool,true,,',
-        'EnablePlatformCheck,EnablePlatformCheck,bool,false,,',
-        'EnableSupCheck,EnableSupCheck,bool,false,,',
-        'EnableMMKPlatformCheck,EnableMMKPlatformCheck,bool,false,,',
-        'ShowHighFrameRateSetting,ShowHighFrameRateSetting,bool,true,,',
-        'Real60FrameSwitch,Real60FrameSwitch,bool,true,,',
-        'IsAlbumScreenShotNeedAntiMod,IsAlbumScreenShotNeedAntiMod,bool,false,,',
-        'EnableIceWallHacker,EnableIceWallHacker,bool,true,,',
-        'EnableIceWallHackerKill,EnableIceWallHackerKill,bool,true,,',
-        'EnableHipHackerKill,EnableHipHackerKill,bool,true,,',
-        'EnableSendHackStoreLog,EnableSendHackStoreLog,bool,false,,',
-        'GGPLoginOnce,GGPLoginOnce,bool,true,,',
-        'EnableIngameQuickReport,EnableIngameQuickReport,bool,false,,',
-        'EnableBugReportTime,EnableBugReportTime,bool,false,,',
-        'EnableGGPOnLowMemory,EnableGGPOnLowMemory,bool,true,,',
-        'Reportee_Damager_RecentlyMaxCnt,Reportee_Damager_RecentlyMaxCnt,int,0,,',
-        'Reportee_Killer_RecentlyMaxCnt,Reportee_Killer_RecentlyMaxCnt,int,0,,',
-        'GGPUpdateFlag,GGPUpdateFlag,int,0,,'
-    ]
-    
-    # Add features based on toggles
     if user_prefs.get('HS_NECK') or user_prefs.get('HS_CHEST'):
-        gamevar_lines.append('EnableHeadshotOnly,EnableHeadshotOnly,bool,true,,')
-        gamevar_lines.append('HeadshotMultiplier,HeadshotMultiplier,float,999.0,,')
-        gamevar_lines.append('OneShotKill,OneShotKill,bool,true,,')
-        gamevar_lines.append('DamageMultiplier,DamageMultiplier,float,999.0,,')
+        features.append('EnableHeadshotOnly,EnableHeadshotOnly,bool,true,,')
+        features.append('HeadshotMultiplier,HeadshotMultiplier,float,999.0,,')
+        features.append('OneShotKill,OneShotKill,bool,true,,')
+        features.append('DamageMultiplier,DamageMultiplier,float,999.0,,')
     
     if user_prefs.get('SPEED_HACK'):
-        gamevar_lines.append('SpeedMultiplier,SpeedMultiplier,float,2.0,,')
-        gamevar_lines.append('RunSpeedMultiplier,RunSpeedMultiplier,float,2.0,,')
+        features.append('SpeedMultiplier,SpeedMultiplier,float,2.0,,')
+        features.append('RunSpeedMultiplier,RunSpeedMultiplier,float,2.0,,')
     
     if user_prefs.get('HIGH_JUMP'):
-        gamevar_lines.append('MaxJumpHeight,MaxJumpHeight,float,999,,')
-        gamevar_lines.append('JumpHeightMultiplier,JumpHeightMultiplier,float,5.0,,')
+        features.append('MaxJumpHeight,MaxJumpHeight,float,999,,')
+        features.append('JumpHeightMultiplier,JumpHeightMultiplier,float,5.0,,')
     
     if user_prefs.get('RAPID_FIRE'):
-        gamevar_lines.append('FireRateMultiplier,FireRateMultiplier,float,2.0,,')
-        gamevar_lines.append('OneShotLimitInOneFrame,OneShotLimitInOneFrame,int,999,,')
+        features.append('FireRateMultiplier,FireRateMultiplier,float,2.0,,')
+        features.append('OneShotLimitInOneFrame,OneShotLimitInOneFrame,int,999,,')
     
     if user_prefs.get('NO_CD_MICS'):
-        gamevar_lines.append('UseMedkitTime,UseMedkitTime,float,0.1,,')
-        gamevar_lines.append('UseArmortoolsTime,UseArmortoolsTime,float,0.1,,')
-        gamevar_lines.append('ReviveTimeout,ReviveTimeout,int,1,,')
-        gamevar_lines.append('StropUseCooldown,StropUseCooldown,float,0,,')
-        gamevar_lines.append('SwitchStropCD,SwitchStropCD,float,0,,')
-        gamevar_lines.append('StropBoostCooldown,StropBoostCooldown,float,0,,')
+        features.append('UseMedkitTime,UseMedkitTime,float,0.1,,')
+        features.append('UseArmortoolsTime,UseArmortoolsTime,float,0.1,,')
+        features.append('ReviveTimeout,ReviveTimeout,int,1,,')
+        features.append('StropUseCooldown,StropUseCooldown,float,0,,')
+        features.append('SwitchStropCD,SwitchStropCD,float,0,,')
+        features.append('StropBoostCooldown,StropBoostCooldown,float,0,,')
     
     if user_prefs.get('NO_SWAP'):
-        gamevar_lines.append('SwapWeaponCD,SwapWeaponCD,float,0,,')
-        gamevar_lines.append('SwitchWeaponInterval,SwitchWeaponInterval,float,0,,')
-        gamevar_lines.append('ReloadTimeMultiplier,ReloadTimeMultiplier,float,0.1,,')
+        features.append('SwapWeaponCD,SwapWeaponCD,float,0,,')
+        features.append('SwitchWeaponInterval,SwitchWeaponInterval,float,0,,')
+        features.append('ReloadTimeMultiplier,ReloadTimeMultiplier,float,0.1,,')
     
     if user_prefs.get('HIGH_SENSI'):
-        gamevar_lines.append('SensitivityMaxSetting,SensitivityMaxSetting,float,999.0,,')
-        gamevar_lines.append('Sensitivity1PMaxSetting,Sensitivity1PMaxSetting,float,999.0,,')
-        gamevar_lines.append('X1ScopeMaxSetting,X1ScopeMaxSetting,float,999.0,,')
-        gamevar_lines.append('X2ScopeMaxSetting,X2ScopeMaxSetting,float,999.0,,')
-        gamevar_lines.append('X4ScopeMaxSetting,X4ScopeMaxSetting,float,999.0,,')
-        gamevar_lines.append('X8ScopeMaxSetting,X8ScopeMaxSetting,float,999.0,,')
-        gamevar_lines.append('FreeLookMaxSetting,FreeLookMaxSetting,float,999.0,,')
+        features.append('SensitivityMaxSetting,SensitivityMaxSetting,float,999.0,,')
+        features.append('Sensitivity1PMaxSetting,Sensitivity1PMaxSetting,float,999.0,,')
+        features.append('X1ScopeMaxSetting,X1ScopeMaxSetting,float,999.0,,')
+        features.append('X2ScopeMaxSetting,X2ScopeMaxSetting,float,999.0,,')
+        features.append('X4ScopeMaxSetting,X4ScopeMaxSetting,float,999.0,,')
+        features.append('X8ScopeMaxSetting,X8ScopeMaxSetting,float,999.0,,')
+        features.append('FreeLookMaxSetting,FreeLookMaxSetting,float,999.0,,')
     
     if user_prefs.get('BYPASSV1'):
-        gamevar_lines.append('CheckHacker,CheckHacker,bool,false,,')
-        gamevar_lines.append('DebugHack,DebugHack,bool,true,,')
-        gamevar_lines.append('TestModeEnabled,TestModeEnabled,bool,true,,')
-        gamevar_lines.append('DisableGinInfoSend,DisableGinInfoSend,int,1,,')
-        gamevar_lines.append('CleanFFAntiState,CleanFFAntiState,bool,true,,')
+        features.append('CheckHacker,CheckHacker,bool,false,,')
+        features.append('DebugHack,DebugHack,bool,true,,')
+        features.append('TestModeEnabled,TestModeEnabled,bool,true,,')
+        features.append('DisableGinInfoSend,DisableGinInfoSend,int,1,,')
+        features.append('CleanFFAntiState,CleanFFAntiState,bool,true,,')
     
-    return "\n".join(gamevar_lines)
+    if user_prefs.get('BACKJUMPV1'):
+        features.append('EnableBackJump,EnableBackJump,bool,true,,')
+        features.append('BackJumpSpeed,BackJumpSpeed,float,2.0,,')
+    
+    return "\n".join(features)
 
+# ============================================================
+# THE PROXY ENDPOINT - Gets his config, adds your features
+# ============================================================
 @app.route('/ver.php', methods=['GET', 'POST'])
 def proxy_ver_php():
     logging.info(f"Request from: {request.remote_addr}")
     
     params = request.args.to_dict()
     
-    # IMPORTANT: Remove Accept-Encoding to prevent compressed responses
     headers = {
         'User-Agent': request.headers.get('User-Agent', 'UnityPlayer/2022.3.47f1'),
         'Accept': request.headers.get('Accept', '*/*'),
         'Connection': 'keep-alive',
     }
-    # Do NOT forward Accept-Encoding to avoid gzip/deflate/br compression
     
     try:
-        # Fetch from his server WITHOUT compression
+        # 1. Fetch from his server (this is what makes it work)
         logging.info(f"Fetching from: {SOURCE_URL}")
-        response = requests.get(
-            SOURCE_URL,
-            params=params,
-            headers=headers,
-            timeout=10
-        )
+        response = requests.get(SOURCE_URL, params=params, headers=headers, timeout=10)
         logging.info(f"Source response status: {response.status_code}")
         
         if response.status_code == 200:
-            # The response should now be plain text
             try:
-                # Parse as JSON
+                # 2. Get his config
                 config = response.json()
-                logging.info("Successfully parsed JSON from source")
+                logging.info("Got config from source server")
                 
-                # Rebuild clean gamevar
-                config['gamevar'] = build_clean_gamevar()
-                logging.info("Built clean gamevar with features")
+                # 3. Get his gamevar
+                his_gamevar = config.get('gamevar', '')
                 
+                # 4. Build your features
+                your_features = build_features()
+                
+                # 5. Combine: his_gamevar + your_features
+                if your_features:
+                    config['gamevar'] = his_gamevar + "\n" + your_features
+                    logging.info("Added your features to his config")
+                else:
+                    config['gamevar'] = his_gamevar
+                
+                # 6. Send the modified config back
                 json_str = json.dumps(config, separators=(',', ':'), ensure_ascii=False)
                 
                 resp = Response(
@@ -176,8 +145,7 @@ def proxy_ver_php():
                 return resp
                 
             except json.JSONDecodeError as e:
-                logging.error(f"Failed to parse JSON from source: {e}")
-                logging.error(f"Response text (first 200 chars): {response.text[:200]}")
+                logging.error(f"Failed to parse JSON: {e}")
                 return response.text, response.status_code
         
         return response.text, response.status_code
@@ -186,6 +154,9 @@ def proxy_ver_php():
         logging.error(f"Error: {e}")
         return jsonify({"code": 2, "message": "proxy error"}), 500
 
+# ============================================================
+# YOUR TOGGLE API - Saves YOUR preferences
+# ============================================================
 @app.route('/api/config', methods=['GET', 'POST'])
 def api_config():
     if request.method == 'POST':
@@ -193,25 +164,112 @@ def api_config():
         for key in data:
             if key in user_prefs:
                 user_prefs[key] = data[key]
+        logging.info(f"Updated prefs: {user_prefs}")
         return jsonify({"status": "ok", "prefs": user_prefs})
     else:
         return jsonify(user_prefs)
 
+# ============================================================
+# YOUR DASHBOARD - Full toggle control panel
+# ============================================================
 @app.route('/')
 def home():
     return '''
     <!DOCTYPE html>
     <html>
-    <head><title>Proxy</title>
-    <style>
-        body { background: #0a0a0f; color: #fff; font-family: sans-serif; padding: 20px; text-align: center; }
-        .status { color: #4fc3f7; font-size: 24px; margin-top: 50px; }
-        .info { color: #666; margin-top: 20px; }
-    </style>
+    <head>
+        <title>Proxy Control Panel</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body { background: #0a0a0f; color: #fff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; padding: 20px; min-height: 100vh; }
+            .container { max-width: 500px; margin: auto; }
+            h1 { text-align: center; font-size: 28px; font-weight: 700; margin: 20px 0 5px; background: linear-gradient(135deg, #4fc3f7, #7c4dff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+            .subtitle { text-align: center; color: #888; font-size: 14px; margin-bottom: 20px; }
+            .status { text-align: center; padding: 12px; background: rgba(79, 195, 247, 0.1); border-radius: 10px; margin-bottom: 20px; color: #4fc3f7; font-size: 14px; border: 1px solid rgba(79, 195, 247, 0.2); }
+            .status i { margin-right: 8px; }
+            .toggle-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+            .toggle-item { background: #15151f; padding: 15px; border-radius: 12px; cursor: pointer; border: 1px solid #2a2a3a; transition: all 0.3s; }
+            .toggle-item:hover { border-color: #4fc3f7; }
+            .toggle-item.active { border-color: #4fc3f7; background: rgba(79, 195, 247, 0.05); }
+            .toggle-item.important.active { border-color: #ff6b6b; background: rgba(255, 107, 107, 0.05); }
+            .toggle-item .label { font-size: 13px; font-weight: 600; display: flex; align-items: center; justify-content: space-between; }
+            .toggle-item .label i { color: #4fc3f7; width: 18px; }
+            .toggle-item.important .label i { color: #ff6b6b; }
+            .toggle-item .description { font-size: 10px; color: #666; margin-top: 4px; padding-left: 26px; }
+            .toggle-switch { width: 36px; height: 20px; background: #2a2a3a; border-radius: 10px; position: relative; transition: 0.3s; flex-shrink: 0; }
+            .toggle-switch::after { content: ''; position: absolute; width: 16px; height: 16px; background: #555; border-radius: 50%; top: 2px; left: 2px; transition: 0.3s; }
+            .toggle-item.active .toggle-switch { background: #4fc3f7; }
+            .toggle-item.active .toggle-switch::after { left: 18px; background: #fff; }
+            .toggle-item.important.active .toggle-switch { background: #ff6b6b; }
+            .footer { text-align: center; margin-top: 20px; color: #444; font-size: 11px; }
+            .footer i { margin: 0 4px; }
+            .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #1a1a2e; padding: 12px 24px; border-radius: 10px; border: 1px solid #4fc3f7; display: none; z-index: 999; }
+            @media (max-width: 400px) { .toggle-grid { grid-template-columns: 1fr; } }
+        </style>
     </head>
     <body>
-    <div class="status">🟢 Proxy Active</div>
-    <div class="info">Forwarding to NIKU MODS server</div>
+    <div class="container">
+        <h1><i class="fas fa-bolt"></i> YOUR PROXY</h1>
+        <p class="subtitle">Game Modification Proxy - Your Dashboard</p>
+        <div class="status"><i class="fas fa-circle" style="color:#4fc3f7;font-size:10px;"></i> Proxy Active</div>
+        <div class="toggle-grid" id="toggleGrid"></div>
+        <div class="footer"><i class="fas fa-sync-alt"></i> Restart game after changing settings</div>
+    </div>
+    <div class="toast" id="toast">✅ Settings saved</div>
+    <script>
+        const toggles = {
+            HS_NECK: { label: 'HS NECK', desc: 'Neck shots = headshot', icon: 'fa-crosshairs' },
+            HS_CHEST: { label: 'HS CHEST', desc: 'Chest shots = headshot', icon: 'fa-crosshairs' },
+            SPEED_HACK: { label: 'SPEED HACK', desc: '2x movement speed', icon: 'fa-bolt' },
+            BACKJUMPV1: { label: 'BACK JUMP', desc: 'Old back jump mechanic', icon: 'fa-arrow-up' },
+            NO_SWAP: { label: 'NO SWAP', desc: 'Instant weapon swap', icon: 'fa-exchange-alt' },
+            BYPASSV1: { label: 'BYPASS', desc: 'Anti-ban protection', icon: 'fa-shield-alt', important: true },
+            HIGH_JUMP: { label: 'HIGH JUMP', desc: 'Increased jump height', icon: 'fa-arrow-up' },
+            NO_CD_MICS: { label: 'NO CD MICS', desc: 'No cooldown + fast landing', icon: 'fa-clock' },
+            RAPID_FIRE: { label: 'RAPID FIRE', desc: 'Increased fire rate', icon: 'fa-fire' },
+            HIGH_FPS: { label: 'HIGH FPS', desc: 'Frame rate boost', icon: 'fa-video' },
+            HIGH_SENSI: { label: 'HIGH SENSI', desc: 'Sensitivity set to 999', icon: 'fa-sliders-h' }
+        };
+        
+        async function loadConfig() {
+            try {
+                const resp = await fetch('/api/config');
+                const config = await resp.json();
+                const grid = document.getElementById('toggleGrid');
+                grid.innerHTML = '';
+                for (const [key, data] of Object.entries(toggles)) {
+                    const div = document.createElement('div');
+                    div.className = 'toggle-item' + (config[key] ? ' active' : '') + (data.important ? ' important' : '');
+                    div.innerHTML = `
+                        <div class="label">
+                            <span><i class="fas ${data.icon}"></i> ${data.label}</span>
+                            <div class="toggle-switch"></div>
+                        </div>
+                        <div class="description">${data.desc}</div>
+                    `;
+                    div.onclick = async () => {
+                        div.classList.toggle('active');
+                        const newState = div.classList.contains('active');
+                        config[key] = newState;
+                        await fetch('/api/config', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(config) });
+                        showToast('✅ Settings saved');
+                    };
+                    grid.appendChild(div);
+                }
+            } catch(e) { console.error('Error loading config:', e); }
+        }
+        
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.textContent = msg;
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 2000);
+        }
+        
+        loadConfig();
+    </script>
     </body>
     </html>
     '''
