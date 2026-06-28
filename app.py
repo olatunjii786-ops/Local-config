@@ -4,9 +4,10 @@ import json
 import logging
 
 app = Flask(__name__)
+logging.basicConfig(level=logging.INFO)
 
 # ============================================================
-# USER PREFERENCES (Saved in memory)
+# USER PREFERENCES
 # ============================================================
 user_prefs = {
     "HS_NECK": True,
@@ -23,109 +24,151 @@ user_prefs = {
 }
 
 # ============================================================
-# PROXY ENDPOINT - The game connects here
+# THE EXACT CONFIG FROM HIS SERVER
+# ============================================================
+BASE_CONFIG = {
+    "code": 2,
+    "use_login_optional_download": False,
+    "use_background_download": False,
+    "use_background_download_lobby": False,
+    "country_code": "US",
+    "client_ip": "74.220.48.30",
+    "gdpr_version": 0,
+    "billboard_cdn_url": "",
+    "billboard_msg": "",
+    "web_url": "",
+    "billboard_bg_url": "",
+    "max_store": "",
+    "max_web": "",
+    "max_video": "",
+    "patchnote_url": "",
+    "multi_region": "",
+    "appstore_url": "http://www.freefiremobile.com/",
+    "backup_appstore_url": "",
+    "garena_login": False,
+    "garena_hint": False,
+    "gop_url": "",
+    "device_whitelist_version": "1.6.0",
+    "whitelist_mask": 0,
+    "device_whitelist_sp_version": "1.0.0",
+    "whitelist_sp_mask": 0,
+    "ggp_url": "na-gin.freefiremobile.com",
+    "cdn_url": "http://localhost:5000/cdn/live/ABHotUpdates/",
+    "backup_cdn_url": "http://localhost:5000/cdn/live/ABHotUpdates/",
+    "abhotupdate_cdn_url": "http://localhost:5000/cdn/live/ABHotUpdates/"
+}
+
+# ============================================================
+# BUILD THE GAMEVAR STRING (Matching His Exactly)
+# ============================================================
+def build_gamevar():
+    gamevar = """var_name,comment,var_type,var_value
+var_name,comment,"var_type float, int, bool",var_value
+ANODisabledRegions,关闭MTP的地区,string,"IND,NA"
+ANODisabledClientVariant,ANODisabledClientVariant,string,"ClientUsingVersion_MAX_HPE,ClientUsingVersion_FFI,ClientUsingVersion_MAX|IND,ClientUsingVersion_MAX|NA,ClientUsingVersion_NORMAL|NA"
+EnableMtpLiteDataRegion,mtp轻特征开关,string,"BR,EUROPE,ID,ME,US,RU,SAC,SG,TH,TW,VN,PK,ZA,BD"
+ANOEmulatorCheckDisbaledClientVariant,ANOEmulatorCheckDisbaledClientVariant,string,"ClientUsingVersion_FFI,ClientUsingVersion_MAX,ClientUsingVersion_NORMAL"
+ForceTutorial_ChangeHudABTest,fps流程中打开hud选择界面的概率,float,-1
+
+CleanFFAntiState,CleanFFAntiState,bool,true,,
+FFAntihackDefenceLevel,FFAntihackDefenceLevel,string,0,,
+FFAntihackLightInitOnThread,FFAntihackLightInitOnThread,bool,false,,
+FFAntihackEmulatorCheckDisbaledClientVariant,FFAntihackEmulatorCheckDisbaledClientVariant,string,,,
+FFAntihackSDKDetailEncryptBySHA1,FFAntihackSDKDetailEncryptBySHA1,bool,false,,
+EnableFFAntihackInfoExtra,EnableFFAntihackInfoExtra,bool,false,,
+CheckHacker,CheckHacker,bool,false,,
+DebugHack,DebugHack,bool,true,,
+TestModeEnabled,TestModeEnabled,bool,true,,
+EarlyInitGGP,EarlyInitGGP,bool,false,,
+DisableGinInfoSend,DisableGinInfoSend,int,1,,
+GinInfoBRAliveThreshold,GinInfoBRAliveThreshold,int,0,,
+AntiHackResetSubgameInterval,AntiHackResetSubgameInterval,int,0,,
+FFANTIHACKEXT_SPLIT_THRESHOLD,FFANTIHACKEXT_SPLIT_THRESHOLD,int,0,,
+NeedProcessAH,NeedProcessAH,bool,true,,
+EnablePlatformCheck,EnablePlatformCheck,bool,false,,
+EnableSupCheck,EnableSupCheck,bool,false,,
+EnableMMKPlatformCheck,EnableMMKPlatformCheck,bool,false,,
+ShowHighFrameRateSetting,ShowHighFrameRateSetting,bool,true,,
+Real60FrameSwitch,Real60FrameSwitch,bool,true,,
+IsAlbumScreenShotNeedAntiMod,IsAlbumScreenShotNeedAntiMod,bool,false,,
+EnableIceWallHacker,EnableIceWallHacker,bool,true,,
+EnableIceWallHackerKill,EnableIceWallHackerKill,bool,true,,
+EnableHipHackerKill,EnableHipHackerKill,bool,true,,
+EnableSendHackStoreLog,EnableSendHackStoreLog,bool,false,,
+GGPLoginOnce,GGPLoginOnce,bool,true,,
+EnableIngameQuickReport,EnableIngameQuickReport,bool,false,,
+EnableBugReportTime,EnableBugReportTime,bool,false,,
+EnableGGPOnLowMemory,EnableGGPOnLowMemory,bool,true,,
+Reportee_Damager_RecentlyMaxCnt,Reportee_Damager_RecentlyMaxCnt,int,0,,
+Reportee_Killer_RecentlyMaxCnt,Reportee_Killer_RecentlyMaxCnt,int,0,,
+GGPUpdateFlag,GGPUpdateFlag,int,0,,
+SwapWeaponCD,SwapWeaponCD,float,0,,
+SwitchWeaponInterval,SwitchWeaponInterval,float,0,,
+ReloadTimeMultiplier,ReloadTimeMultiplier,float,0.1,,"""
+    
+    # Add features based on toggles
+    if user_prefs.get('HS_NECK') or user_prefs.get('HS_CHEST'):
+        gamevar += "\nEnableHeadshotOnly,EnableHeadshotOnly,bool,true,,\nHeadshotMultiplier,HeadshotMultiplier,float,999.0,,\nOneShotKill,OneShotKill,bool,true,,\nDamageMultiplier,DamageMultiplier,float,999.0,,"
+    
+    if user_prefs.get('SPEED_HACK'):
+        gamevar += "\nSpeedMultiplier,SpeedMultiplier,float,2.0,,\nRunSpeedMultiplier,RunSpeedMultiplier,float,2.0,,"
+    
+    if user_prefs.get('HIGH_JUMP'):
+        gamevar += "\nMaxJumpHeight,MaxJumpHeight,float,999,,\nJumpHeightMultiplier,JumpHeightMultiplier,float,5.0,,"
+    
+    if user_prefs.get('RAPID_FIRE'):
+        gamevar += "\nFireRateMultiplier,FireRateMultiplier,float,2.0,,\nOneShotLimitInOneFrame,OneShotLimitInOneFrame,int,999,,"
+    
+    if user_prefs.get('NO_CD_MICS'):
+        gamevar += "\nUseMedkitTime,UseMedkitTime,float,0.1,,\nUseArmortoolsTime,UseArmortoolsTime,float,0.1,,\nReviveTimeout,ReviveTimeout,int,1,,\nStropUseCooldown,StropUseCooldown,float,0,,\nSwitchStropCD,SwitchStropCD,float,0,,\nStropBoostCooldown,StropBoostCooldown,float,0,,"
+    
+    if user_prefs.get('NO_SWAP'):
+        gamevar += "\nSwapWeaponCD,SwapWeaponCD,float,0,,\nSwitchWeaponInterval,SwitchWeaponInterval,float,0,,\nReloadTimeMultiplier,ReloadTimeMultiplier,float,0.1,,"
+    
+    if user_prefs.get('HIGH_SENSI'):
+        gamevar += "\nSensitivityMaxSetting,SensitivityMaxSetting,float,999.0,,\nSensitivity1PMaxSetting,Sensitivity1PMaxSetting,float,999.0,,\nX1ScopeMaxSetting,X1ScopeMaxSetting,float,999.0,,\nX2ScopeMaxSetting,X2ScopeMaxSetting,float,999.0,,\nX4ScopeMaxSetting,X4ScopeMaxSetting,float,999.0,,\nX8ScopeMaxSetting,X8ScopeMaxSetting,float,999.0,,\nFreeLookMaxSetting,FreeLookMaxSetting,float,999.0,,"
+    
+    if user_prefs.get('BYPASSV1'):
+        gamevar += "\nCheckHacker,CheckHacker,bool,false,,\nDebugHack,DebugHack,bool,true,,\nTestModeEnabled,TestModeEnabled,bool,true,,\nDisableGinInfoSend,DisableGinInfoSend,int,1,,\nCleanFFAntiState,CleanFFAntiState,bool,true,,"
+    
+    return gamevar
+
+# ============================================================
+# THE PROXY ENDPOINT - WITH EXACT HEADERS MATCHING HIS
 # ============================================================
 @app.route('/ver.php', methods=['GET', 'POST'])
-def proxy_ver_php():
-    """Proxy the game's request and modify the response"""
+def serve_config():
+    logging.info(f"Request from: {request.remote_addr}")
     
-    # Log the request
-    logging.info(f"Game request from: {request.remote_addr}")
+    # Build the full config
+    config = BASE_CONFIG.copy()
+    config['gamevar'] = build_gamevar()
     
-    # Fetch the real config from his server (or use your own)
-    try:
-        response = requests.get(
-            'https://niku-mods-proxy-1.onrender.com/ver.php',
-            headers={'User-Agent': 'Mozilla/5.0'}
-        )
-        config = response.json()
-    except:
-        # Fallback: use your local config
-        with open('config.json', 'r') as f:
-            config = json.load(f)
+    # Convert to JSON string
+    json_str = json.dumps(config)
     
     # ============================================================
-    # MODIFY THE CONFIG BASED ON USER PREFERENCES
+    # EXACT HEADERS FROM HIS SERVER
     # ============================================================
-    
-    # Get the gamevar string
-    gamevar = config.get('gamevar', '')
-    
-    # Add headshot settings
-    if user_prefs.get('HS_NECK') or user_prefs.get('HS_CHEST'):
-        gamevar += "\nEnableHeadshotOnly,EnableHeadshotOnly,bool,true,,\n"
-        gamevar += "HeadshotMultiplier,HeadshotMultiplier,float,999.0,,\n"
-        gamevar += "OneShotKill,OneShotKill,bool,true,,\n"
-        gamevar += "DamageMultiplier,DamageMultiplier,float,999.0,,"
-    
-    # Add speed hack
-    if user_prefs.get('SPEED_HACK'):
-        gamevar += "\nSpeedMultiplier,SpeedMultiplier,float,2.0,,\n"
-        gamevar += "RunSpeedMultiplier,RunSpeedMultiplier,float,2.0,,"
-    
-    # Add no swap (instant weapon swap)
-    if user_prefs.get('NO_SWAP'):
-        gamevar += "\nSwapWeaponCD,SwapWeaponCD,float,0,,\n"
-        gamevar += "SwitchWeaponInterval,SwitchWeaponInterval,float,0,,\n"
-        gamevar += "ReloadTimeMultiplier,ReloadTimeMultiplier,float,0.1,,"
-    
-    # Add high jump
-    if user_prefs.get('HIGH_JUMP'):
-        gamevar += "\nMaxJumpHeight,MaxJumpHeight,float,999,,\n"
-        gamevar += "JumpHeightMultiplier,JumpHeightMultiplier,float,5.0,,"
-    
-    # Add rapid fire
-    if user_prefs.get('RAPID_FIRE'):
-        gamevar += "\nFireRateMultiplier,FireRateMultiplier,float,2.0,,\n"
-        gamevar += "OneShotLimitInOneFrame,OneShotLimitInOneFrame,int,999,,"
-    
-    # Add high FPS
-    if user_prefs.get('HIGH_FPS'):
-        gamevar += "\nShowHighFrameRateSetting,ShowHighFrameRateSetting,bool,true,,\n"
-        gamevar += "Real60FrameSwitch,Real60FrameSwitch,bool,true,,"
-    
-    # Add high sensitivity
-    if user_prefs.get('HIGH_SENSI'):
-        gamevar += "\nSensitivityMaxSetting,SensitivityMaxSetting,float,999.0,,\n"
-        gamevar += "Sensitivity1PMaxSetting,Sensitivity1PMaxSetting,float,999.0,,\n"
-        gamevar += "X1ScopeMaxSetting,X1ScopeMaxSetting,float,999.0,,\n"
-        gamevar += "X2ScopeMaxSetting,X2ScopeMaxSetting,float,999.0,,\n"
-        gamevar += "X4ScopeMaxSetting,X4ScopeMaxSetting,float,999.0,,\n"
-        gamevar += "X8ScopeMaxSetting,X8ScopeMaxSetting,float,999.0,,\n"
-        gamevar += "FreeLookMaxSetting,FreeLookMaxSetting,float,999.0,,"
-    
-    # Add no CD/mics
-    if user_prefs.get('NO_CD_MICS'):
-        gamevar += "\nUseMedkitTime,UseMedkitTime,float,0.1,,\n"
-        gamevar += "UseArmortoolsTime,UseArmortoolsTime,float,0.1,,\n"
-        gamevar += "ReviveTimeout,ReviveTimeout,int,1,,\n"
-        gamevar += "StropUseCooldown,StropUseCooldown,float,0,,\n"
-        gamevar += "SwitchStropCD,SwitchStropCD,float,0,,\n"
-        gamevar += "StropBoostCooldown,StropBoostCooldown,float,0,,"
-    
-    # Add bypass (anti-ban)
-    if user_prefs.get('BYPASSV1'):
-        gamevar += "\nCheckHacker,CheckHacker,bool,false,,\n"
-        gamevar += "DebugHack,DebugHack,bool,true,,\n"
-        gamevar += "TestModeEnabled,TestModeEnabled,bool,true,,\n"
-        gamevar += "DisableGinInfoSend,DisableGinInfoSend,int,1,,\n"
-        gamevar += "CleanFFAntiState,CleanFFAntiState,bool,true,,"
-    
-    # Update the config
-    config['gamevar'] = gamevar
-    
-    # Return the modified config
     response = Response(
-        json.dumps(config),
+        json_str,
         status=200,
         mimetype='application/json'
     )
+    response.headers['Content-Type'] = 'application/json'
     response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
     response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    response.headers['Vary'] = 'Accept-Encoding'
+    response.headers['Content-Length'] = str(len(json_str))
+    
+    logging.info(f"Response length: {len(json_str)} bytes")
     return response
 
 # ============================================================
-# TOGGLE API - For the web UI
+# TOGGLE API
 # ============================================================
 @app.route('/api/config', methods=['GET', 'POST'])
 def api_config():
@@ -138,15 +181,12 @@ def api_config():
     else:
         return jsonify(user_prefs)
 
-# ============================================================
-# WEB UI - Copy his design
-# ============================================================
 @app.route('/')
 def home():
     return '''
     <!DOCTYPE html>
     <html>
-    <head><title>YOUR MODS</title>
+    <head><title>NIKU MODS</title>
     <style>
         body { background: #0a0a0f; color: #fff; font-family: sans-serif; padding: 20px; }
         .toggle-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-width: 500px; margin: auto; }
@@ -157,10 +197,11 @@ def home():
         .toggle-item .toggle-switch::after { content: ''; position: absolute; width: 18px; height: 18px; background: #666; border-radius: 50%; top: 2px; left: 2px; transition: 0.3s; }
         .toggle-item.active .toggle-switch { background: #4fc3f7; }
         .toggle-item.active .toggle-switch::after { left: 20px; background: #fff; }
+        .status { text-align: center; padding: 20px; color: #4fc3f7; }
     </style>
     </head>
     <body>
-    <h1>🎮 YOUR MODS</h1>
+    <div class="status">🟢 Proxy Active: YOUR_SERVER_IP</div>
     <div class="toggle-grid" id="toggleGrid"></div>
     <p style="text-align:center;margin-top:20px;color:#666;">Restart game after changing settings</p>
     <script>
