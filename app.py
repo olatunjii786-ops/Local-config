@@ -36,17 +36,10 @@ UNWANTED_FEATURES = [
 ]
 
 # ============================================================
-# FEATURES TO ADD (Inject these into his config)
+# FEATURES TO ADD (Body-to-Headshot only - NO RAPID FIRE)
 # ============================================================
 FEATURES_TO_ADD = [
-    # ----- SAFE RAPID FIRE (Won't trigger anti-cheat) -----
-    'RapidFire,RapidFire,bool,true,,',
-    'FireRateMultiplier,FireRateMultiplier,float,1.3,,',      # 1.3x speed (safe)
-    'OneShotLimitInOneFrame,OneShotLimitInOneFrame,int,2,,',  # 2 shots per frame (safe)
-    'MaxAnimSpeed,MaxAnimSpeed,float,1.5,,',                  # Moderate animation speed
-    
-    # ----- BODY TO HEADSHOT CONVERSION -----
-    # These are common gamevar names for body-to-headshot
+    # Body to Headshot conversion
     'BodyToHeadshot,BodyToHeadshot,bool,true,,',
     'HeadshotConversion,HeadshotConversion,bool,true,,',
     'AimAssistMode,AimAssistMode,string,Headshot,,',
@@ -59,7 +52,7 @@ FEATURES_TO_ADD = [
 # NUKE FUNCTION - Remove unwanted lines, then add features
 # ============================================================
 def nuke_and_add(gamevar):
-    """Remove unwanted features and add Rapid Fire + Headshot"""
+    """Remove unwanted features and add Headshot (no rapid fire)"""
     
     if not gamevar:
         return gamevar
@@ -79,14 +72,14 @@ def nuke_and_add(gamevar):
         if should_keep:
             cleaned_lines.append(line)
     
-    # Add Rapid Fire + Headshot features
+    # Add Headshot features (no rapid fire)
     cleaned_lines.extend(FEATURES_TO_ADD)
-    logging.info(f"Added Rapid Fire + Headshot features")
+    logging.info(f"Added Headshot features (Rapid Fire REMOVED)")
     
     return '\n'.join(cleaned_lines)
 
 # ============================================================
-# PROXY ENDPOINT - Get his config, nuke unwanted, add features
+# PROXY ENDPOINT
 # ============================================================
 @app.route('/ver.php', methods=['GET', 'POST'])
 def proxy_ver_php():
@@ -108,7 +101,6 @@ def proxy_ver_php():
                 his_config = response.json()
                 logging.info("Got his config")
                 
-                # Nuke unwanted AND add features
                 if 'gamevar' in his_config:
                     original_len = len(his_config['gamevar'])
                     his_config['gamevar'] = nuke_and_add(his_config['gamevar'])
@@ -158,18 +150,15 @@ def home():
     </head>
     <body>
     <div class="status">🟢 Proxy Active</div>
-    <div class="info">Nuking unwanted, adding features</div>
+    <div class="info">Nuking unwanted, adding Headshot only</div>
     <div class="features">
         <h3 style="color:#fff;">Status:</h3>
         <ul style="list-style:none;padding:0;">
             <li class="removed">❌ Speed, Jump, Back Jump, High Sensitivity</li>
-            <li class="added">✅ Rapid Fire (Safe: 1.3x)</li>
+            <li class="removed">❌ Rapid Fire (REMOVED)</li>
             <li class="added">✅ Body-to-Headshot (Drag Headshot)</li>
             <li class="kept">✅ Everything else from his config preserved</li>
         </ul>
-        <p style="color:#444;font-size:12px;margin-top:20px;">
-            Edit FEATURES_TO_ADD in app.py to adjust values
-        </p>
     </div>
     </body>
     </html>
