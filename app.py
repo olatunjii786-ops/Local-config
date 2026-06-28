@@ -7,20 +7,9 @@ app = Flask(__name__)
 logging.basicConfig(level=logging.INFO)
 
 # ============================================================
-# REAL GARENA CONFIG SERVER - TRY MULTIPLE PATHS
+# USE HIS SERVER AS THE SOURCE (since it works)
 # ============================================================
-GARENA_BASE = "https://gin.freefiremobile.com"
-
-# Possible paths the game might use
-POSSIBLE_PATHS = [
-    "/config.jsonver.php",
-    "/config/ver.php",
-    "/ver.php",
-    "/config",
-    "/config.json",
-    "/api/config",
-    "/v1/config",
-]
+SOURCE_URL = "https://niku-mods-proxy-1.onrender.com/ver.php"
 
 # ============================================================
 # USER PREFERENCES
@@ -97,9 +86,10 @@ def inject_features(gamevar):
 @app.route('/ver.php', methods=['GET', 'POST'])
 def proxy_ver_php():
     logging.info(f"Request from: {request.remote_addr}")
-    logging.info(f"Query params: {dict(request.args)}")
     
+    # Forward query parameters
     params = request.args.to_dict()
+    
     headers = {
         'User-Agent': request.headers.get('User-Agent', 'UnityPlayer/2022.3.47f1'),
         'Accept': request.headers.get('Accept', '*/*'),
@@ -107,67 +97,47 @@ def proxy_ver_php():
         'Connection': 'keep-alive',
     }
     
-    # ============================================================
-    # TRY EACH POSSIBLE PATH
-    # ============================================================
-    for path in POSSIBLE_PATHS:
-        url = f"{GARENA_BASE}{path}"
-        logging.info(f"Trying: {url}")
+    try:
+        # Fetch from his server (which still works)
+        logging.info(f"Fetching from: {SOURCE_URL}")
+        response = requests.get(SOURCE_URL, params=params, headers=headers, timeout=10)
+        logging.info(f"Source response status: {response.status_code}")
         
-        try:
-            garena_response = requests.get(
-                url,
-                params=params,
-                headers=headers,
-                timeout=10
-            )
-            
-            logging.info(f"Path {path} -> Status: {garena_response.status_code}")
-            
-            if garena_response.status_code == 200:
-                logging.info(f"✅ Found working path: {path}")
+        if response.status_code == 200:
+            try:
+                config = response.json()
+                logging.info("Got config from source server")
                 
-                try:
-                    config = garena_response.json()
-                    
-                    if 'gamevar' in config:
-                        config['gamevar'] = inject_features(config['gamevar'])
-                    
-                    json_str = json.dumps(config, separators=(',', ':'), ensure_ascii=False)
-                    
-                    response = Response(
-                        json_str,
-                        status=200,
-                        mimetype='application/json'
-                    )
-                    response.headers['Content-Type'] = 'application/json'
-                    response.headers['Access-Control-Allow-Origin'] = '*'
-                    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-                    response.headers['Pragma'] = 'no-cache'
-                    response.headers['Expires'] = '0'
-                    
-                    return response
-                    
-                except json.JSONDecodeError:
-                    logging.error(f"Failed to parse JSON from {path}")
-                    continue
-                    
-        except requests.exceptions.Timeout:
-            logging.error(f"Timeout for {path}")
-            continue
-        except Exception as e:
-            logging.error(f"Error for {path}: {e}")
-            continue
-    
-    # ============================================================
-    # IF NO PATH WORKS, RETURN FALLBACK
-    # ============================================================
-    logging.error("No working path found!")
-    return jsonify({"code": 2, "message": "config not found"}), 404
+                # Inject your features
+                if 'gamevar' in config:
+                    config['gamevar'] = inject_features(config['gamevar'])
+                    logging.info("Injected features")
+                
+                json_str = json.dumps(config, separators=(',', ':'), ensure_ascii=False)
+                
+                resp = Response(
+                    json_str,
+                    status=200,
+                    mimetype='application/json'
+                )
+                resp.headers['Content-Type'] = 'application/json'
+                resp.headers['Access-Control-Allow-Origin'] = '*'
+                resp.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+                resp.headers['Pragma'] = 'no-cache'
+                resp.headers['Expires'] = '0'
+                
+                return resp
+                
+            except json.JSONDecodeError:
+                logging.error("Failed to parse JSON from source")
+                return response.text, response.status_code
+        
+        return response.text, response.status_code
+        
+    except Exception as e:
+        logging.error(f"Error: {e}")
+        return jsonify({"code": 2, "message": "proxy error"}), 500
 
-# ============================================================
-# API CONFIG
-# ============================================================
 @app.route('/api/config', methods=['GET', 'POST'])
 def api_config():
     if request.method == 'POST':
@@ -193,7 +163,7 @@ def home():
     </head>
     <body>
     <div class="status">🟢 Proxy Active</div>
-    <div class="info">Trying multiple Garena paths</div>
+    <div class="info">Forwarding to NIKU MODS server</div>
     </body>
     </html>
     '''
