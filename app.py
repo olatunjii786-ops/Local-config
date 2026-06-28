@@ -28,15 +28,11 @@ user_prefs = {
     "HIGH_SENSI": True
 }
 
-# ============================================================
-# CLEAN GAMEVAR BUILDER
-# ============================================================
-def build_clean_gamevar(base_gamevar):
-    """Extract only the essential fields and add features"""
+def build_clean_gamevar():
+    """Build a clean gamevar string with only the needed fields"""
     
-    # Start with a clean base that we know works
-    clean_gamevar = [
-        "var_name,comment,var_type,var_value",
+    gamevar_lines = [
+        'var_name,comment,var_type,var_value',
         'var_name,comment,"var_type float, int, bool",var_value',
         'ANODisabledRegions,关闭MTP的地区,string,"IND,NA"',
         'ANODisabledClientVariant,ANODisabledClientVariant,string,"ClientUsingVersion_MAX_HPE,ClientUsingVersion_FFI,ClientUsingVersion_MAX|IND,ClientUsingVersion_MAX|NA,ClientUsingVersion_NORMAL|NA"',
@@ -80,84 +76,89 @@ def build_clean_gamevar(base_gamevar):
     
     # Add features based on toggles
     if user_prefs.get('HS_NECK') or user_prefs.get('HS_CHEST'):
-        clean_gamevar.append('EnableHeadshotOnly,EnableHeadshotOnly,bool,true,,')
-        clean_gamevar.append('HeadshotMultiplier,HeadshotMultiplier,float,999.0,,')
-        clean_gamevar.append('OneShotKill,OneShotKill,bool,true,,')
-        clean_gamevar.append('DamageMultiplier,DamageMultiplier,float,999.0,,')
+        gamevar_lines.append('EnableHeadshotOnly,EnableHeadshotOnly,bool,true,,')
+        gamevar_lines.append('HeadshotMultiplier,HeadshotMultiplier,float,999.0,,')
+        gamevar_lines.append('OneShotKill,OneShotKill,bool,true,,')
+        gamevar_lines.append('DamageMultiplier,DamageMultiplier,float,999.0,,')
     
     if user_prefs.get('SPEED_HACK'):
-        clean_gamevar.append('SpeedMultiplier,SpeedMultiplier,float,2.0,,')
-        clean_gamevar.append('RunSpeedMultiplier,RunSpeedMultiplier,float,2.0,,')
+        gamevar_lines.append('SpeedMultiplier,SpeedMultiplier,float,2.0,,')
+        gamevar_lines.append('RunSpeedMultiplier,RunSpeedMultiplier,float,2.0,,')
     
     if user_prefs.get('HIGH_JUMP'):
-        clean_gamevar.append('MaxJumpHeight,MaxJumpHeight,float,999,,')
-        clean_gamevar.append('JumpHeightMultiplier,JumpHeightMultiplier,float,5.0,,')
+        gamevar_lines.append('MaxJumpHeight,MaxJumpHeight,float,999,,')
+        gamevar_lines.append('JumpHeightMultiplier,JumpHeightMultiplier,float,5.0,,')
     
     if user_prefs.get('RAPID_FIRE'):
-        clean_gamevar.append('FireRateMultiplier,FireRateMultiplier,float,2.0,,')
-        clean_gamevar.append('OneShotLimitInOneFrame,OneShotLimitInOneFrame,int,999,,')
+        gamevar_lines.append('FireRateMultiplier,FireRateMultiplier,float,2.0,,')
+        gamevar_lines.append('OneShotLimitInOneFrame,OneShotLimitInOneFrame,int,999,,')
     
     if user_prefs.get('NO_CD_MICS'):
-        clean_gamevar.append('UseMedkitTime,UseMedkitTime,float,0.1,,')
-        clean_gamevar.append('UseArmortoolsTime,UseArmortoolsTime,float,0.1,,')
-        clean_gamevar.append('ReviveTimeout,ReviveTimeout,int,1,,')
-        clean_gamevar.append('StropUseCooldown,StropUseCooldown,float,0,,')
-        clean_gamevar.append('SwitchStropCD,SwitchStropCD,float,0,,')
-        clean_gamevar.append('StropBoostCooldown,StropBoostCooldown,float,0,,')
+        gamevar_lines.append('UseMedkitTime,UseMedkitTime,float,0.1,,')
+        gamevar_lines.append('UseArmortoolsTime,UseArmortoolsTime,float,0.1,,')
+        gamevar_lines.append('ReviveTimeout,ReviveTimeout,int,1,,')
+        gamevar_lines.append('StropUseCooldown,StropUseCooldown,float,0,,')
+        gamevar_lines.append('SwitchStropCD,SwitchStropCD,float,0,,')
+        gamevar_lines.append('StropBoostCooldown,StropBoostCooldown,float,0,,')
     
     if user_prefs.get('NO_SWAP'):
-        clean_gamevar.append('SwapWeaponCD,SwapWeaponCD,float,0,,')
-        clean_gamevar.append('SwitchWeaponInterval,SwitchWeaponInterval,float,0,,')
-        clean_gamevar.append('ReloadTimeMultiplier,ReloadTimeMultiplier,float,0.1,,')
+        gamevar_lines.append('SwapWeaponCD,SwapWeaponCD,float,0,,')
+        gamevar_lines.append('SwitchWeaponInterval,SwitchWeaponInterval,float,0,,')
+        gamevar_lines.append('ReloadTimeMultiplier,ReloadTimeMultiplier,float,0.1,,')
     
     if user_prefs.get('HIGH_SENSI'):
-        clean_gamevar.append('SensitivityMaxSetting,SensitivityMaxSetting,float,999.0,,')
-        clean_gamevar.append('Sensitivity1PMaxSetting,Sensitivity1PMaxSetting,float,999.0,,')
-        clean_gamevar.append('X1ScopeMaxSetting,X1ScopeMaxSetting,float,999.0,,')
-        clean_gamevar.append('X2ScopeMaxSetting,X2ScopeMaxSetting,float,999.0,,')
-        clean_gamevar.append('X4ScopeMaxSetting,X4ScopeMaxSetting,float,999.0,,')
-        clean_gamevar.append('X8ScopeMaxSetting,X8ScopeMaxSetting,float,999.0,,')
-        clean_gamevar.append('FreeLookMaxSetting,FreeLookMaxSetting,float,999.0,,')
+        gamevar_lines.append('SensitivityMaxSetting,SensitivityMaxSetting,float,999.0,,')
+        gamevar_lines.append('Sensitivity1PMaxSetting,Sensitivity1PMaxSetting,float,999.0,,')
+        gamevar_lines.append('X1ScopeMaxSetting,X1ScopeMaxSetting,float,999.0,,')
+        gamevar_lines.append('X2ScopeMaxSetting,X2ScopeMaxSetting,float,999.0,,')
+        gamevar_lines.append('X4ScopeMaxSetting,X4ScopeMaxSetting,float,999.0,,')
+        gamevar_lines.append('X8ScopeMaxSetting,X8ScopeMaxSetting,float,999.0,,')
+        gamevar_lines.append('FreeLookMaxSetting,FreeLookMaxSetting,float,999.0,,')
     
     if user_prefs.get('BYPASSV1'):
-        clean_gamevar.append('CheckHacker,CheckHacker,bool,false,,')
-        clean_gamevar.append('DebugHack,DebugHack,bool,true,,')
-        clean_gamevar.append('TestModeEnabled,TestModeEnabled,bool,true,,')
-        clean_gamevar.append('DisableGinInfoSend,DisableGinInfoSend,int,1,,')
-        clean_gamevar.append('CleanFFAntiState,CleanFFAntiState,bool,true,,')
+        gamevar_lines.append('CheckHacker,CheckHacker,bool,false,,')
+        gamevar_lines.append('DebugHack,DebugHack,bool,true,,')
+        gamevar_lines.append('TestModeEnabled,TestModeEnabled,bool,true,,')
+        gamevar_lines.append('DisableGinInfoSend,DisableGinInfoSend,int,1,,')
+        gamevar_lines.append('CleanFFAntiState,CleanFFAntiState,bool,true,,')
     
-    return "\n".join(clean_gamevar)
+    return "\n".join(gamevar_lines)
 
-# ============================================================
-# PROXY ENDPOINT
-# ============================================================
 @app.route('/ver.php', methods=['GET', 'POST'])
 def proxy_ver_php():
     logging.info(f"Request from: {request.remote_addr}")
     
     params = request.args.to_dict()
+    
+    # IMPORTANT: Remove Accept-Encoding to prevent compressed responses
     headers = {
         'User-Agent': request.headers.get('User-Agent', 'UnityPlayer/2022.3.47f1'),
         'Accept': request.headers.get('Accept', '*/*'),
-        'Accept-Encoding': 'gzip, deflate, br',
         'Connection': 'keep-alive',
     }
+    # Do NOT forward Accept-Encoding to avoid gzip/deflate/br compression
     
     try:
-        # Fetch from his server
+        # Fetch from his server WITHOUT compression
         logging.info(f"Fetching from: {SOURCE_URL}")
-        response = requests.get(SOURCE_URL, params=params, headers=headers, timeout=10)
+        response = requests.get(
+            SOURCE_URL,
+            params=params,
+            headers=headers,
+            timeout=10
+        )
         logging.info(f"Source response status: {response.status_code}")
         
         if response.status_code == 200:
+            # The response should now be plain text
             try:
+                # Parse as JSON
                 config = response.json()
-                logging.info("Got config from source server")
+                logging.info("Successfully parsed JSON from source")
                 
                 # Rebuild clean gamevar
-                if 'gamevar' in config:
-                    config['gamevar'] = build_clean_gamevar(config['gamevar'])
-                    logging.info("Built clean gamevar with features")
+                config['gamevar'] = build_clean_gamevar()
+                logging.info("Built clean gamevar with features")
                 
                 json_str = json.dumps(config, separators=(',', ':'), ensure_ascii=False)
                 
@@ -174,8 +175,9 @@ def proxy_ver_php():
                 
                 return resp
                 
-            except json.JSONDecodeError:
-                logging.error("Failed to parse JSON from source")
+            except json.JSONDecodeError as e:
+                logging.error(f"Failed to parse JSON from source: {e}")
+                logging.error(f"Response text (first 200 chars): {response.text[:200]}")
                 return response.text, response.status_code
         
         return response.text, response.status_code
@@ -184,9 +186,6 @@ def proxy_ver_php():
         logging.error(f"Error: {e}")
         return jsonify({"code": 2, "message": "proxy error"}), 500
 
-# ============================================================
-# API CONFIG
-# ============================================================
 @app.route('/api/config', methods=['GET', 'POST'])
 def api_config():
     if request.method == 'POST':
