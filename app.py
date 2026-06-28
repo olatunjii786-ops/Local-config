@@ -13,52 +13,42 @@ HIS_CONFIG_URL = "https://niku-mods-proxy-1.onrender.com/ver.php"
 # ============================================================
 UNWANTED_FEATURES = [
     # Speed features
-    'RunSpeed',
-    'DashSpeedScale', 
-    'CrouchSpeed',
-    'CreepSpeed',
-    'DieingSpeed',
-    'StropSpeed',
-    'HorseSpeedLineSpeed',
-    'HorseDeadSpeed',
-    'SpeedMultiplier',
-    'RunSpeedMultiplier',
+    'RunSpeed', 'DashSpeedScale', 'CrouchSpeed', 'CreepSpeed',
+    'DieingSpeed', 'StropSpeed', 'HorseSpeedLineSpeed', 'HorseDeadSpeed',
+    'SpeedMultiplier', 'RunSpeedMultiplier',
     
     # Jump features
-    'MaxJumpHeight',
-    'JumpHeightMultiplier',
-    'SkyDivingSpeedDelta',
-    'SkyDivingRotationSpeed',
-    'SkySurfingSpeedDelta',
-    'ParachutingMaxAngleTilt',
-    'ParachutingMinAngleTilt',
+    'MaxJumpHeight', 'JumpHeightMultiplier',
+    'SkyDivingSpeedDelta', 'SkyDivingRotationSpeed', 'SkySurfingSpeedDelta',
+    'ParachutingMaxAngleTilt', 'ParachutingMinAngleTilt',
     
     # Back jump
-    'EnableBackJump',
-    'BackJumpSpeed',
+    'EnableBackJump', 'BackJumpSpeed',
     
     # High sensitivity
-    'SensitivityMaxSetting',
-    'Sensitivity1PMaxSetting',
-    'X1ScopeMaxSetting',
-    'X2ScopeMaxSetting',
-    'X4ScopeMaxSetting',
-    'X8ScopeMaxSetting',
-    'FreeLookMaxSetting',
+    'SensitivityMaxSetting', 'Sensitivity1PMaxSetting',
+    'X1ScopeMaxSetting', 'X2ScopeMaxSetting', 'X4ScopeMaxSetting',
+    'X8ScopeMaxSetting', 'FreeLookMaxSetting',
     
     # Other unwanted
-    'EnableAccelerationOnFalling',
-    'CanJumpFallingRunFast',
-    'CanCreepRunFast',
-    'CanCrouchingRunFast',
-    'StropFallingResetSpeed',
+    'EnableAccelerationOnFalling', 'CanJumpFallingRunFast',
+    'CanCreepRunFast', 'CanCrouchingRunFast', 'StropFallingResetSpeed',
 ]
 
 # ============================================================
-# NUKE FUNCTION - Remove unwanted lines from gamevar
+# FEATURES TO ADD (Inject these into his config)
 # ============================================================
-def nuke_unwanted_features(gamevar):
-    """Remove all unwanted feature lines from gamevar"""
+FEATURES_TO_ADD = [
+    'RapidFire,RapidFire,bool,true,,',
+    'FireRateMultiplier,FireRateMultiplier,float,2.0,,',
+    'OneShotLimitInOneFrame,OneShotLimitInOneFrame,int,999,,',
+]
+
+# ============================================================
+# NUKE FUNCTION - Remove unwanted lines, then add features
+# ============================================================
+def nuke_and_add(gamevar):
+    """Remove unwanted features and add Rapid Fire"""
     
     if not gamevar:
         return gamevar
@@ -66,8 +56,8 @@ def nuke_unwanted_features(gamevar):
     lines = gamevar.split('\n')
     cleaned_lines = []
     
+    # Remove unwanted features
     for line in lines:
-        # Check if this line contains any unwanted feature
         should_keep = True
         for unwanted in UNWANTED_FEATURES:
             if line.startswith(unwanted + ',') or line.startswith(unwanted + ':'):
@@ -78,10 +68,14 @@ def nuke_unwanted_features(gamevar):
         if should_keep:
             cleaned_lines.append(line)
     
+    # Add Rapid Fire features
+    cleaned_lines.extend(FEATURES_TO_ADD)
+    logging.info(f"Added Rapid Fire features")
+    
     return '\n'.join(cleaned_lines)
 
 # ============================================================
-# PROXY ENDPOINT - Get his config, nuke unwanted, pass rest
+# PROXY ENDPOINT
 # ============================================================
 @app.route('/ver.php', methods=['GET', 'POST'])
 def proxy_ver_php():
@@ -95,7 +89,6 @@ def proxy_ver_php():
     }
     
     try:
-        # 1. Fetch from his server
         response = requests.get(HIS_CONFIG_URL, params=params, headers=headers, timeout=10)
         logging.info(f"His server response: {response.status_code}")
         
@@ -104,14 +97,13 @@ def proxy_ver_php():
                 his_config = response.json()
                 logging.info("Got his config")
                 
-                # 2. Nuke unwanted features from gamevar
+                # Nuke unwanted AND add Rapid Fire
                 if 'gamevar' in his_config:
                     original_len = len(his_config['gamevar'])
-                    his_config['gamevar'] = nuke_unwanted_features(his_config['gamevar'])
+                    his_config['gamevar'] = nuke_and_add(his_config['gamevar'])
                     new_len = len(his_config['gamevar'])
-                    logging.info(f"Gamevar nuked: {original_len} -> {new_len} bytes")
+                    logging.info(f"Gamevar modified: {original_len} -> {new_len} bytes")
                 
-                # 3. Return the nuked config
                 json_str = json.dumps(his_config, separators=(',', ':'), ensure_ascii=False)
                 
                 resp = Response(json_str, status=200, mimetype='application/json')
@@ -147,23 +139,21 @@ def home():
         .status { color: #4fc3f7; font-size: 24px; margin-top: 50px; }
         .info { color: #666; margin-top: 20px; }
         .features { margin-top: 30px; text-align: left; max-width: 400px; margin-left: auto; margin-right: auto; }
-        .features li { color: #888; padding: 4px 0; }
+        .features li { padding: 4px 0; }
         .removed { color: #ff6b6b; }
+        .added { color: #4fc3f7; }
     </style>
     </head>
     <body>
     <div class="status">🟢 Proxy Active</div>
-    <div class="info">Nuking unwanted features from his config</div>
+    <div class="info">Nuking unwanted, adding Rapid Fire</div>
     <div class="features">
-        <h3 style="color:#fff;">Removed Features:</h3>
+        <h3 style="color:#fff;">Status:</h3>
         <ul style="list-style:none;padding:0;">
-            <li class="removed">❌ Speed Hack (RunSpeed, DashSpeedScale, etc.)</li>
-            <li class="removed">❌ High Jump (MaxJumpHeight, JumpHeightMultiplier, etc.)</li>
-            <li class="removed">❌ Back Jump (EnableBackJump, BackJumpSpeed)</li>
-            <li class="removed">❌ High Sensitivity (SensitivityMaxSetting, etc.)</li>
-            <li class="removed">❌ Falling/Speed Mods</li>
+            <li class="removed">❌ Speed, Jump, Back Jump, High Sensitivity</li>
+            <li class="added">✅ Rapid Fire (Added)</li>
+            <li class="added">✅ Everything else from his config preserved</li>
         </ul>
-        <p style="color:#444;font-size:12px;margin-top:20px;">Everything else from his config is preserved</p>
     </div>
     </body>
     </html>
