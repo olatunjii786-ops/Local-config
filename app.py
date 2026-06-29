@@ -12,7 +12,7 @@ HIS_CONFIG_URL = "https://niku-mods-proxy-1.onrender.com/ver.php"
 # FEATURES TO REMOVE (Nuke these from his config)
 # ============================================================
 UNWANTED_FEATURES = [
-    # Speed features (he has these, we want to remove them)
+    # Speed features
     'RunSpeed', 'DashSpeedScale', 'CrouchSpeed', 'CreepSpeed',
     'DieingSpeed', 'StropSpeed', 'HorseSpeedLineSpeed', 'HorseDeadSpeed',
     'SpeedMultiplier', 'RunSpeedMultiplier',
@@ -30,29 +30,38 @@ UNWANTED_FEATURES = [
     'X1ScopeMaxSetting', 'X2ScopeMaxSetting', 'X4ScopeMaxSetting',
     'X8ScopeMaxSetting', 'FreeLookMaxSetting',
     
+    # High FPS
+    'ShowHighFrameRateSetting', 'Real60FrameSwitch', 'HighFPSSetting',
+    
+    # ----- RAPID FIRE (NUKED) -----
+    'FireInterval',
+    'FireRateMultiplier', 
+    'OneShotLimitInOneFrame',
+    'MaxAnimSpeed',
+    'RapidFire',
+    
     # Other unwanted
     'EnableAccelerationOnFalling', 'CanJumpFallingRunFast',
     'CanCreepRunFast', 'CanCrouchingRunFast', 'StropFallingResetSpeed',
-    'ShowHighFrameRateSetting', 'Real60FrameSwitch', 'HighFPSSetting',
 ]
 
 # ============================================================
-# FEATURES TO ADD (These are NOT in his config)
+# FEATURES TO ADD (NO RAPID FIRE)
 # ============================================================
 FEATURES_TO_ADD = [
-    # ----- HEADSHOT (Missing from his config) -----
+    # ----- HEADSHOT -----
     'HeadShotOnly,HeadShotOnly,bool,true,,',
     'HeadShotMultiplier,HeadShotMultiplier,float,999.0,,',
     'HeadShotDamageScale,HeadShotDamageScale,float,999.0,,',
     'EnableHeadShotHitEffect,EnableHeadShotHitEffect,bool,true,,',
     'HeadshotSightFXOpen,HeadshotSightFXOpen,bool,true,,',
     
-    # ----- DAMAGE (Missing from his config) -----
+    # ----- DAMAGE -----
     'DamageMultiplier,DamageMultiplier,float,999.0,,',
     'DamageRatioHead,DamageRatioHead,float,999.0,,',
     'MaxDamage,MaxDamage,int,999,,',
     
-    # ----- NO RECOIL (Missing from his config) -----
+    # ----- NO RECOIL -----
     'FPPRecoil,FPPRecoil,bool,false,,',
     'FPPRecoilYFactor,FPPRecoilYFactor,float,0.0,,',
     'FPPRecoilZFactor,FPPRecoilZFactor,float,0.0,,',
@@ -66,7 +75,7 @@ FEATURES_TO_ADD = [
 # NUKE FUNCTION - Remove unwanted, add missing features
 # ============================================================
 def nuke_and_add(gamevar):
-    """Remove unwanted features and add missing ones"""
+    """Remove unwanted features and add missing ones (NO RAPID FIRE)"""
     
     if not gamevar:
         return gamevar
@@ -86,9 +95,9 @@ def nuke_and_add(gamevar):
         if should_keep:
             cleaned_lines.append(line)
     
-    # Add missing features (headshot, damage, no recoil)
+    # Add missing features (Headshot, Damage, No Recoil - NO RAPID FIRE)
     cleaned_lines.extend(FEATURES_TO_ADD)
-    logging.info(f"Added missing features (Headshot, Damage, No Recoil)")
+    logging.info(f"Added features: Headshot, Damage, No Recoil (Rapid Fire REMOVED)")
     
     return '\n'.join(cleaned_lines)
 
@@ -161,12 +170,12 @@ def home():
     </head>
     <body>
     <div class="status">🟢 Proxy Active</div>
-    <div class="info">Nuking unwanted, adding missing features</div>
+    <div class="info">Nuking unwanted, adding features (NO RAPID FIRE)</div>
     <div class="features">
         <h3 style="color:#fff;">Status:</h3>
         <ul style="list-style:none;padding:0;">
             <li class="removed">❌ Speed, Jump, Back Jump, High Sensitivity</li>
-            <li class="removed">❌ Rapid Fire (REMOVED)</li>
+            <li class="removed">❌ Rapid Fire (NUKED)</li>
             <li class="added">✅ Headshot (HeadShotOnly, HeadShotMultiplier)</li>
             <li class="added">✅ Damage (DamageMultiplier, DamageRatioHead)</li>
             <li class="added">✅ No Recoil (FPPRecoil, FPPRecoilYFactor)</li>
