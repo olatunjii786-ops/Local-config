@@ -30,9 +30,10 @@ UNWANTED_FEATURES = [
     'X1ScopeMaxSetting', 'X2ScopeMaxSetting', 'X4ScopeMaxSetting',
     'X8ScopeMaxSetting', 'FreeLookMaxSetting',
     
-    # Rapid Fire
+    # ----- RAPID FIRE (NUKED - REMOVED COMPLETELY) -----
     'FireInterval', 'FireRateMultiplier', 'OneShotLimitInOneFrame',
-    'MaxAnimSpeed', 'RapidFire',
+    'MaxAnimSpeed', 'RapidFire', 'Rapid_Fire', 'Rapidfire',
+    'FireSpeed', 'FireIntervalScale',
     
     # Fake/unreliable features
     'DamageMultiplier', 'DamageRatioHead', 'DamageRatioBody',
@@ -54,30 +55,33 @@ UNWANTED_FEATURES = [
     'EnableRecoil',
     'NoSpread', 'SpreadMultiplier', 'BulletSpread',
     'ReloadSpeed', 'ReloadTimeMultiplier', 'FastAutoReloadSpeed',
-    'SwapWeaponCD', 'SwitchWeaponInterval',
+    
+    # Fast Weapon Switch - KEPT
+    # 'SwapWeaponCD', 'SwitchWeaponInterval',  ← NOT NUKED
     
     # Other unwanted
     'EnableAccelerationOnFalling', 'CanJumpFallingRunFast',
     'CanCreepRunFast', 'CanCrouchingRunFast', 'StropFallingResetSpeed',
-    
-    # REMOVED: High FPS - KEEP IT (not nuked)
-    # 'ShowHighFrameRateSetting', 'Real60FrameSwitch', 'HighFPSSetting',
 ]
 
 # ============================================================
-# FEATURES TO ADD (From dump.cs - Aim Assist + Headshot + High FPS)
+# FEATURES TO ADD
 # ============================================================
 FEATURES_TO_ADD = [
+    # ----- FAST WEAPON SWITCH (KEPT) -----
+    'SwapWeaponCD,SwapWeaponCD,float,0.0,,',
+    'SwitchWeaponInterval,SwitchWeaponInterval,float,0.0,,',
+    
     # ----- HEADSHOT -----
     'HeadShotOnly,HeadShotOnly,bool,true,,',
     'HeadShotMultiplier,HeadShotMultiplier,float,999.0,,',
     
-    # ----- HIGH FPS (KEPT - Not Nuked) -----
+    # ----- HIGH FPS -----
     'ShowHighFrameRateSetting,ShowHighFrameRateSetting,bool,true,,',
     'Real60FrameSwitch,Real60FrameSwitch,bool,true,,',
     'HighFPSSetting,HighFPSSetting,bool,true,,',
     
-    # ----- AIM ASSIST (From aimassist.txt) -----
+    # ----- AIM ASSIST -----
     'SightAimAssist,SightAimAssist,bool,true,,',
     'SightAimAssistSnapRange,SightAimAssistSnapRange,float,999.0,,',
     'SightAimAssistDistFalloff,SightAimAssistDistFalloff,float,999.0,,',
@@ -95,7 +99,7 @@ FEATURES_TO_ADD = [
     'NeedAimAssist,NeedAimAssist,bool,true,,',
     'IsNeedAimAssists,IsNeedAimAssists,bool,true,,',
     
-    # ----- LOCK AIM (From lock_aim.txt) -----
+    # ----- LOCK AIM -----
     'IsLockAimRotationUpdate,IsLockAimRotationUpdate,bool,true,,',
     'LockedAimingCollider,LockedAimingCollider,bool,true,,',
     
@@ -114,7 +118,7 @@ FEATURES_TO_ADD = [
 # NUKE FUNCTION
 # ============================================================
 def nuke_and_add(gamevar):
-    """Remove unwanted features and add aim assist + high FPS"""
+    """Remove unwanted features including RAPID FIRE"""
     
     if not gamevar:
         return gamevar
@@ -211,23 +215,21 @@ def home():
     </head>
     <body>
     <div class="status">🟢 Proxy Active</div>
-    <div class="info">Aim Assist + Headshot + High FPS</div>
+    <div class="info">Aim Assist + Headshot + High FPS + Fast Weapon Switch</div>
     <div class="features">
         <h3 style="color:#fff;">Active Features:</h3>
         <ul style="list-style:none;padding:0;">
+            <li class="added">✅ Fast Weapon Switch (SwapWeaponCD, SwitchWeaponInterval)</li>
             <li class="added">✅ Aim Assist (SightAimAssist, AimAssistStrength)</li>
             <li class="added">✅ Aim Snap (SightAimAssistSnapRange)</li>
             <li class="added">✅ Aim Lock (IsLockAimRotationUpdate)</li>
             <li class="added">✅ Headshot (HeadShotOnly, HeadShotMultiplier)</li>
             <li class="added">✅ High FPS (ShowHighFrameRateSetting, Real60FrameSwitch)</li>
-            <li class="added">✅ Anti-Cheat Bypass (CheckHacker, DebugHack)</li>
-            <li class="added">✅ Test Mode (TestModeEnabled)</li>
-            <li class="removed">❌ Speed, Jump, High Sensitivity</li>
+            <li class="added">✅ Anti-Cheat Bypass</li>
+            <li class="removed">❌ SPEED, JUMP, HIGH SENSITIVITY</li>
+            <li class="removed">❌ RAPID FIRE (NUKED)</li>
             <li class="kept">✅ Everything else preserved</li>
         </ul>
-        <p style="color:#444;font-size:12px;margin-top:20px;">
-            High FPS is now KEPT (not nuked)
-        </p>
     </div>
     </body>
     </html>
