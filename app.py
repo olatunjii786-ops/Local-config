@@ -12,78 +12,94 @@ HIS_CONFIG_URL = "https://niku-mods-proxy-1.onrender.com/ver.php"
 # FEATURES TO REMOVE (Nuke these from his config)
 # ============================================================
 UNWANTED_FEATURES = [
-    # Speed features (NUKED)
+    # Speed features
     'RunSpeed', 'DashSpeedScale', 'CrouchSpeed', 'CreepSpeed',
     'DieingSpeed', 'StropSpeed', 'HorseSpeedLineSpeed', 'HorseDeadSpeed',
     'SpeedMultiplier', 'RunSpeedMultiplier',
     
-    # Jump features (NUKED)
+    # Jump features
     'MaxJumpHeight', 'JumpHeightMultiplier',
     'SkyDivingSpeedDelta', 'SkyDivingRotationSpeed', 'SkySurfingSpeedDelta',
     'ParachutingMaxAngleTilt', 'ParachutingMinAngleTilt',
     
-    # Back jump (NUKED)
+    # Back jump
     'EnableBackJump', 'BackJumpSpeed',
     
-    # High sensitivity (NUKED)
+    # High sensitivity
     'SensitivityMaxSetting', 'Sensitivity1PMaxSetting',
     'X1ScopeMaxSetting', 'X2ScopeMaxSetting', 'X4ScopeMaxSetting',
     'X8ScopeMaxSetting', 'FreeLookMaxSetting',
     
-    # High FPS (NUKED)
-    'ShowHighFrameRateSetting', 'Real60FrameSwitch', 'HighFPSSetting',
-    
-    # Rapid Fire (NUKED)
+    # Rapid Fire
     'FireInterval', 'FireRateMultiplier', 'OneShotLimitInOneFrame',
     'MaxAnimSpeed', 'RapidFire',
     
-    # Fake damage features (REMOVED - don't work)
+    # Fake/unreliable features
     'DamageMultiplier', 'DamageRatioHead', 'DamageRatioBody',
     'DamageRatioLimb', 'MaxDamage', 'MinDamage', 'WeaponDamage',
     'BulletDamage', 'HeadShotDamageScale',
-    
-    # Fake unlimited features (REMOVED - don't work)
     'UnlimitedAmmo', 'UnlimitedAmmoSwitch', 'unlimited_ammo_switch',
     'AmmoFree', 'FullAmmo', 'AmmoClipSize', 'WeaponAmmoCilpRevise',
     'UnlimitedThrowables', 'UnlimitedThrowablesSwitch',
     'unlimited_throwables_switch', 'MaxAutoPickupGrenade',
     'MaxAutoPickupFrozenGrenade', 'MaxAutoPickupThrowingKnife',
-    
-    # Fake magic bullet (REMOVED - don't work)
     'HitBoxScale', 'HitboxScale', 'PlayerColliderRadius',
     'BulletHitRadius', 'BulletHitBoxMultiplier', 'ColliderScale',
     'HitBoxMultiplier', 'HitBoxSizeMultiplier', 'EnableHitBoxScale',
     'EnableFireColliderScale', 'FireColliderRadiusScale',
     'FireColliderHeightScale', 'SantinoDummyColliderRadiusScale',
-    
-    # Fake no recoil (REMOVED - don't work)
     'FPPRecoil', 'FPPRecoilYFactor', 'FPPRecoilZFactor',
     'RecoilYCycle', 'RecoilZCycle', 'RecoilBackwardX',
     'RecoilBackwardZ', 'RecoilMultiplier', 'RecoilAmount',
     'EnableRecoil',
-    
-    # Fake no spread (REMOVED - don't work)
     'NoSpread', 'SpreadMultiplier', 'BulletSpread',
-    
-    # Fake aim assist (REMOVED - don't work)
-    'AimAssistStrength', 'AimAssistRange', 'AimAssistLockSpeed',
-    'AimAssistLockDistance', 'EnableAimAssist',
-    
-    # Fake fast reload (REMOVED - visual only)
     'ReloadSpeed', 'ReloadTimeMultiplier', 'FastAutoReloadSpeed',
     'SwapWeaponCD', 'SwitchWeaponInterval',
     
     # Other unwanted
     'EnableAccelerationOnFalling', 'CanJumpFallingRunFast',
     'CanCreepRunFast', 'CanCrouchingRunFast', 'StropFallingResetSpeed',
+    
+    # REMOVED: High FPS - KEEP IT (not nuked)
+    # 'ShowHighFrameRateSetting', 'Real60FrameSwitch', 'HighFPSSetting',
 ]
 
 # ============================================================
-# ONLY KEEP FEATURES THAT ACTUALLY WORK
+# FEATURES TO ADD (From dump.cs - Aim Assist + Headshot + High FPS)
 # ============================================================
 FEATURES_TO_ADD = [
-    # ----- ANTI-CHEAT BYPASS (REALLY WORKS) -----
-    # These disable the client-side anti-cheat
+    # ----- HEADSHOT -----
+    'HeadShotOnly,HeadShotOnly,bool,true,,',
+    'HeadShotMultiplier,HeadShotMultiplier,float,999.0,,',
+    
+    # ----- HIGH FPS (KEPT - Not Nuked) -----
+    'ShowHighFrameRateSetting,ShowHighFrameRateSetting,bool,true,,',
+    'Real60FrameSwitch,Real60FrameSwitch,bool,true,,',
+    'HighFPSSetting,HighFPSSetting,bool,true,,',
+    
+    # ----- AIM ASSIST (From aimassist.txt) -----
+    'SightAimAssist,SightAimAssist,bool,true,,',
+    'SightAimAssistSnapRange,SightAimAssistSnapRange,float,999.0,,',
+    'SightAimAssistDistFalloff,SightAimAssistDistFalloff,float,999.0,,',
+    'SightAimAssistDistpriority,SightAimAssistDistpriority,bool,true,,',
+    'SightAimAssistDistprioMin,SightAimAssistDistprioMin,float,0.0,,',
+    'SightAimAssistDistprioMax,SightAimAssistDistprioMax,float,999.0,,',
+    'AimAssistType,AimAssistType,int,0,,',
+    'AimAssistStrength,AimAssistStrength,float,999.0,,',
+    'AimAssistRange,AimAssistRange,float,999.0,,',
+    'AimAssistLockSpeed,AimAssistLockSpeed,float,999.0,,',
+    'AimAssistLockDistance,AimAssistLockDistance,float,999.0,,',
+    'AimAssistDistance,AimAssistDistance,float,999.0,,',
+    'EnableAimAssist,EnableAimAssist,bool,true,,',
+    'CanBeLockedByAimAssist,CanBeLockedByAimAssist,bool,true,,',
+    'NeedAimAssist,NeedAimAssist,bool,true,,',
+    'IsNeedAimAssists,IsNeedAimAssists,bool,true,,',
+    
+    # ----- LOCK AIM (From lock_aim.txt) -----
+    'IsLockAimRotationUpdate,IsLockAimRotationUpdate,bool,true,,',
+    'LockedAimingCollider,LockedAimingCollider,bool,true,,',
+    
+    # ----- ANTI-CHEAT BYPASS -----
     'CleanFFAntiState,CleanFFAntiState,bool,true,,',
     'FFAntihackDefenceLevel,FFAntihackDefenceLevel,string,0,,',
     'FFAntihackLightInitOnThread,FFAntihackLightInitOnThread,bool,false,,',
@@ -92,22 +108,13 @@ FEATURES_TO_ADD = [
     'TestModeEnabled,TestModeEnabled,bool,true,,',
     'DisableGinInfoSend,DisableGinInfoSend,int,1,,',
     'EarlyInitGGP,EarlyInitGGP,bool,false,,',
-    'EnableIceWallHacker,EnableIceWallHacker,bool,false,,',
-    'EnableIceWallHackerKill,EnableIceWallHackerKill,bool,false,,',
-    'EnableHipHackerKill,EnableHipHackerKill,bool,false,,',
-    'EnableGGPOnLowMemory,EnableGGPOnLowMemory,bool,false,,',
-    'GGPLoginOnce,GGPLoginOnce,bool,false,,',
-    
-    # ----- HEADSHOT (MIGHT work - depends on game version) -----
-    'HeadShotOnly,HeadShotOnly,bool,true,,',
-    'HeadShotMultiplier,HeadShotMultiplier,float,999.0,,',
 ]
 
 # ============================================================
 # NUKE FUNCTION
 # ============================================================
 def nuke_and_add(gamevar):
-    """Remove unwanted features and add only working ones"""
+    """Remove unwanted features and add aim assist + high FPS"""
     
     if not gamevar:
         return gamevar
@@ -115,7 +122,6 @@ def nuke_and_add(gamevar):
     lines = gamevar.split('\n')
     cleaned_lines = []
     
-    # Remove unwanted features
     for line in lines:
         should_keep = True
         for unwanted in UNWANTED_FEATURES:
@@ -127,7 +133,6 @@ def nuke_and_add(gamevar):
         if should_keep:
             cleaned_lines.append(line)
     
-    # Add only working features
     for feature in FEATURES_TO_ADD:
         logging.info(f"Adding: {feature}")
         cleaned_lines.append(feature)
@@ -206,20 +211,22 @@ def home():
     </head>
     <body>
     <div class="status">🟢 Proxy Active</div>
-    <div class="info">Clean Config - Only Working Features</div>
+    <div class="info">Aim Assist + Headshot + High FPS</div>
     <div class="features">
-        <h3 style="color:#fff;">Status:</h3>
+        <h3 style="color:#fff;">Active Features:</h3>
         <ul style="list-style:none;padding:0;">
+            <li class="added">✅ Aim Assist (SightAimAssist, AimAssistStrength)</li>
+            <li class="added">✅ Aim Snap (SightAimAssistSnapRange)</li>
+            <li class="added">✅ Aim Lock (IsLockAimRotationUpdate)</li>
+            <li class="added">✅ Headshot (HeadShotOnly, HeadShotMultiplier)</li>
+            <li class="added">✅ High FPS (ShowHighFrameRateSetting, Real60FrameSwitch)</li>
             <li class="added">✅ Anti-Cheat Bypass (CheckHacker, DebugHack)</li>
             <li class="added">✅ Test Mode (TestModeEnabled)</li>
-            <li class="added">✅ GGP Disabled (DisableGinInfoSend)</li>
-            <li class="added">✅ Headshot (HeadShotOnly, HeadShotMultiplier)</li>
-            <li class="removed">❌ Speed, Jump, Back Jump, High Sensitivity</li>
-            <li class="removed">❌ All Fake Features (Damage, Recoil, Spread, etc.)</li>
-            <li class="kept">✅ Everything else from his config preserved</li>
+            <li class="removed">❌ Speed, Jump, High Sensitivity</li>
+            <li class="kept">✅ Everything else preserved</li>
         </ul>
         <p style="color:#444;font-size:12px;margin-top:20px;">
-            Only features that actually work through config
+            High FPS is now KEPT (not nuked)
         </p>
     </div>
     </body>
