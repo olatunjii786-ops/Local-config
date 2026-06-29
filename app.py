@@ -33,7 +33,7 @@ UNWANTED_FEATURES = [
     # High FPS
     'ShowHighFrameRateSetting', 'Real60FrameSwitch', 'HighFPSSetting',
     
-    # Rapid Fire (NUKED)
+    # Rapid Fire (NUKED - REMOVED COMPLETELY)
     'FireInterval', 'FireRateMultiplier', 'OneShotLimitInOneFrame',
     'MaxAnimSpeed', 'RapidFire',
     
@@ -43,7 +43,7 @@ UNWANTED_FEATURES = [
 ]
 
 # ============================================================
-# FEATURES TO ADD (Headshot + Magic Bullet + No Recoil)
+# FEATURES TO ADD (Headshot + Magic Bullet + No Recoil - NO RAPID FIRE)
 # ============================================================
 FEATURES_TO_ADD = [
     # ----- HEADSHOT -----
@@ -60,14 +60,14 @@ FEATURES_TO_ADD = [
     'DamageMultiplier,DamageMultiplier,float,999.0,,',
     'MaxDamage,MaxDamage,int,999,,',
     
-    # ----- MAGIC BULLET (Expanded Hitbox) -----
-    'HitBoxScale,HitBoxScale,float,5.0,,',
-    'PlayerColliderRadius,PlayerColliderRadius,float,5.0,,',
-    'BulletHitRadius,BulletHitRadius,float,5.0,,',
+    # ----- MAGIC BULLET (MASSIVE HITBOX - 50x) -----
+    'HitBoxScale,HitBoxScale,float,50.0,,',
+    'PlayerColliderRadius,PlayerColliderRadius,float,50.0,,',
+    'BulletHitRadius,BulletHitRadius,float,50.0,,',
     'EnableFireColliderScale,EnableFireColliderScale,bool,true,,',
-    'FireColliderRadiusScale,FireColliderRadiusScale,float,5.0,,',
-    'FireColliderHeightScale,FireColliderHeightScale,float,5.0,,',
-    'SantinoDummyColliderRadiusScale,SantinoDummyColliderRadiusScale,float,5.0,,',
+    'FireColliderRadiusScale,FireColliderRadiusScale,float,50.0,,',
+    'FireColliderHeightScale,FireColliderHeightScale,float,50.0,,',
+    'SantinoDummyColliderRadiusScale,SantinoDummyColliderRadiusScale,float,50.0,,',
     
     # ----- NO RECOIL -----
     'FPPRecoil,FPPRecoil,bool,false,,',
@@ -83,7 +83,7 @@ FEATURES_TO_ADD = [
 # NUKE FUNCTION - Remove unwanted, add missing features
 # ============================================================
 def nuke_and_add(gamevar):
-    """Remove unwanted features and add missing ones"""
+    """Remove unwanted features and add missing ones (NO RAPID FIRE)"""
     
     if not gamevar:
         return gamevar
@@ -103,7 +103,7 @@ def nuke_and_add(gamevar):
         if should_keep:
             cleaned_lines.append(line)
     
-    # Add missing features
+    # Add missing features (NO RAPID FIRE)
     for feature in FEATURES_TO_ADD:
         logging.info(f"Adding: {feature}")
         cleaned_lines.append(feature)
@@ -182,13 +182,13 @@ def home():
     </head>
     <body>
     <div class="status">🟢 Proxy Active</div>
-    <div class="info">Headshot + Magic Bullet + No Recoil</div>
+    <div class="info">Headshot + Magic Bullet (50x) + No Recoil</div>
     <div class="features">
         <h3 style="color:#fff;">Active Features:</h3>
         <ul style="list-style:none;padding:0;">
             <li class="added">✅ Headshot (HeadShotOnly, HeadShotMultiplier)</li>
             <li class="added">✅ Body-to-Headshot (HitDamageRatioBody)</li>
-            <li class="added">✅ Magic Bullet (HitBoxScale, PlayerColliderRadius)</li>
+            <li class="added">✅ Magic Bullet (50x HitBoxScale, PlayerColliderRadius)</li>
             <li class="added">✅ No Recoil (FPPRecoil, FPPRecoilYFactor)</li>
             <li class="added">✅ Damage (DamageMultiplier, MaxDamage)</li>
             <li class="removed">❌ Speed, Jump, Back Jump, High Sensitivity</li>
