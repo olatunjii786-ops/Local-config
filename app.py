@@ -35,7 +35,7 @@ UNWANTED_FEATURES = [
     
     # Rapid Fire (NUKED - REMOVED COMPLETELY)
     'FireInterval', 'FireRateMultiplier', 'OneShotLimitInOneFrame',
-    'MaxAnimSpeed', 'RapidFire',
+    'MaxAnimSpeed', 'RapidFire', 'Rapid_Fire',
     
     # Other unwanted
     'EnableAccelerationOnFalling', 'CanJumpFallingRunFast',
@@ -43,27 +43,27 @@ UNWANTED_FEATURES = [
 ]
 
 # ============================================================
-# FEATURES TO ADD (All REAL client-side features)
+# FEATURES TO ADD (NO RAPID FIRE - ONLY REAL FEATURES)
 # ============================================================
 FEATURES_TO_ADD = [
-    # ----- HEADSHOT (REAL) -----
+    # ----- HEADSHOT (REAL - Found) -----
     'HeadShotOnly,HeadShotOnly,bool,true,,',
     'HeadShotMultiplier,HeadShotMultiplier,float,999.0,,',
     'HeadShotDamageScale,HeadShotDamageScale,float,999.0,,',
     
-    # ----- BODY TO HEADSHOT (REAL) -----
+    # ----- BODY TO HEADSHOT (REAL - Found) -----
     'HitDamageRatioBody,HitDamageRatioBody,float,999.0,,',
     'HitDamageRatioHead,HitDamageRatioHead,float,999.0,,',
     'HitDamageRatioLimb,HitDamageRatioLimb,float,999.0,,',
     
-    # ----- FAST RELOAD (REAL) -----
+    # ----- FAST RELOAD (REAL - Found) -----
     'ReloadSpeed,ReloadSpeed,float,999.0,,',
     'ReloadTimeMultiplier,ReloadTimeMultiplier,float,0.01,,',
     'FastAutoReloadSpeed,FastAutoReloadSpeed,float,999.0,,',
     'SwapWeaponCD,SwapWeaponCD,float,0.0,,',
     'SwitchWeaponInterval,SwitchWeaponInterval,float,0.0,,',
     
-    # ----- UNLIMITED THROWABLES (REAL) -----
+    # ----- UNLIMITED THROWABLES (REAL - Found) -----
     'UnlimitedThrowables,UnlimitedThrowables,bool,true,,',
     'UnlimitedThrowablesSwitch,UnlimitedThrowablesSwitch,bool,true,,',
     'unlimited_throwables_switch,unlimited_throwables_switch,bool,true,,',
@@ -71,7 +71,7 @@ FEATURES_TO_ADD = [
     'MaxAutoPickupFrozenGrenade,MaxAutoPickupFrozenGrenade,int,99,,',
     'MaxAutoPickupThrowingKnife,MaxAutoPickupThrowingKnife,int,99,,',
     
-    # ----- UNLIMITED AMMO (REAL) -----
+    # ----- UNLIMITED AMMO (REAL - Found) -----
     'UnlimitedAmmo,UnlimitedAmmo,bool,true,,',
     'UnlimitedAmmoSwitch,UnlimitedAmmoSwitch,bool,true,,',
     'unlimited_ammo_switch,unlimited_ammo_switch,bool,true,,',
@@ -80,7 +80,7 @@ FEATURES_TO_ADD = [
     'AmmoClipSize,AmmoClipSize,int,999,,',
     'WeaponAmmoCilpRevise,WeaponAmmoCilpRevise,int,999,,',
     
-    # ----- MAGIC BULLET (Hitbox Expansion - REAL) -----
+    # ----- MAGIC BULLET (REAL - Found) -----
     'HitBoxScale,HitBoxScale,float,50.0,,',
     'HitboxScale,HitboxScale,float,50.0,,',
     'PlayerColliderRadius,PlayerColliderRadius,float,50.0,,',
@@ -95,7 +95,7 @@ FEATURES_TO_ADD = [
     'FireColliderHeightScale,FireColliderHeightScale,float,50.0,,',
     'SantinoDummyColliderRadiusScale,SantinoDummyColliderRadiusScale,float,50.0,,',
     
-    # ----- NO RECOIL (REAL) -----
+    # ----- NO RECOIL (REAL - Found) -----
     'FPPRecoil,FPPRecoil,bool,false,,',
     'FPPRecoilYFactor,FPPRecoilYFactor,float,0.0,,',
     'FPPRecoilZFactor,FPPRecoilZFactor,float,0.0,,',
@@ -107,29 +107,17 @@ FEATURES_TO_ADD = [
     'RecoilAmount,RecoilAmount,float,0.0,,',
     'EnableRecoil,EnableRecoil,bool,false,,',
     
-    # ----- NO SPREAD (REAL) -----
+    # ----- NO SPREAD (REAL - Found) -----
     'NoSpread,NoSpread,bool,true,,',
     'SpreadMultiplier,SpreadMultiplier,float,0.0,,',
     'BulletSpread,BulletSpread,float,0.0,,',
     
-    # ----- AIM ASSIST (REAL) -----
+    # ----- AIM ASSIST (REAL - Found) -----
     'AimAssistStrength,AimAssistStrength,float,999.0,,',
     'AimAssistRange,AimAssistRange,float,999.0,,',
     'AimAssistLockSpeed,AimAssistLockSpeed,float,999.0,,',
     'AimAssistLockDistance,AimAssistLockDistance,float,999.0,,',
     'EnableAimAssist,EnableAimAssist,bool,true,,',
-    
-    # ----- NO SWAY (REAL) -----
-    'WeaponSway,WeaponSway,bool,false,,',
-    'SwayMultiplier,SwayMultiplier,float,0.0,,',
-    
-    # ----- NO FLINCH (REAL) -----
-    'Flinch,Flinch,bool,false,,',
-    'FlinchMultiplier,FlinchMultiplier,float,0.0,,',
-    
-    # ----- INSTANT SCOPE (REAL) -----
-    'ScopeInTime,ScopeInTime,float,0.0,,',
-    'ScopeSpeed,ScopeSpeed,float,999.0,,',
 ]
 
 # ============================================================
@@ -249,11 +237,8 @@ def home():
             <li class="added">✅ No Recoil (FPPRecoil, FPPRecoilYFactor)</li>
             <li class="added">✅ No Spread (NoSpread, SpreadMultiplier)</li>
             <li class="added">✅ Aim Assist (AimAssistStrength, AimAssistRange)</li>
-            <li class="added">✅ No Sway (WeaponSway, SwayMultiplier)</li>
-            <li class="added">✅ No Flinch (Flinch, FlinchMultiplier)</li>
-            <li class="added">✅ Instant Scope (ScopeInTime, ScopeSpeed)</li>
             <li class="removed">❌ Speed, Jump, Back Jump, High Sensitivity</li>
-            <li class="removed">❌ Rapid Fire (REMOVED)</li>
+            <li class="removed">❌ RAPID FIRE (REMOVED)</li>
             <li class="kept">✅ Everything else from his config preserved</li>
         </ul>
         <p style="color:#444;font-size:12px;margin-top:20px;">
