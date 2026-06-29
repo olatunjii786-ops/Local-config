@@ -33,12 +33,9 @@ UNWANTED_FEATURES = [
     # High FPS
     'ShowHighFrameRateSetting', 'Real60FrameSwitch', 'HighFPSSetting',
     
-    # ----- RAPID FIRE (NUKED) -----
-    'FireInterval',
-    'FireRateMultiplier', 
-    'OneShotLimitInOneFrame',
-    'MaxAnimSpeed',
-    'RapidFire',
+    # Rapid Fire (NUKED)
+    'FireInterval', 'FireRateMultiplier', 'OneShotLimitInOneFrame',
+    'MaxAnimSpeed', 'RapidFire',
     
     # Other unwanted
     'EnableAccelerationOnFalling', 'CanJumpFallingRunFast',
@@ -46,36 +43,51 @@ UNWANTED_FEATURES = [
 ]
 
 # ============================================================
-# FEATURES TO ADD (NO RAPID FIRE)
+# FEATURES TO ADD (All variations from dump.cs)
 # ============================================================
 FEATURES_TO_ADD = [
-    # ----- HEADSHOT -----
+    # ----- HEADSHOT (All possible variations) -----
     'HeadShotOnly,HeadShotOnly,bool,true,,',
+    'EnableHeadShotOnly,EnableHeadShotOnly,bool,true,,',
     'HeadShotMultiplier,HeadShotMultiplier,float,999.0,,',
     'HeadShotDamageScale,HeadShotDamageScale,float,999.0,,',
-    'EnableHeadShotHitEffect,EnableHeadShotHitEffect,bool,true,,',
+    'HeadShotDamageScaleRate,HeadShotDamageScaleRate,float,999.0,,',
+    'EnableHeadShot,EnableHeadShot,bool,true,,',
+    'OneShotKill,OneShotKill,bool,true,,',
+    'OneShotHeadShot,OneShotHeadShot,bool,true,,',
     'HeadshotSightFXOpen,HeadshotSightFXOpen,bool,true,,',
     
-    # ----- DAMAGE -----
+    # ----- DAMAGE (All possible variations) -----
     'DamageMultiplier,DamageMultiplier,float,999.0,,',
     'DamageRatioHead,DamageRatioHead,float,999.0,,',
+    'DamageRatioBody,DamageRatioBody,float,999.0,,',
+    'DamageRatioLimb,DamageRatioLimb,float,999.0,,',
     'MaxDamage,MaxDamage,int,999,,',
+    'MinDamage,MinDamage,int,999,,',
+    'WeaponDamage,WeaponDamage,int,999,,',
+    'BulletDamage,BulletDamage,float,999.0,,',
     
-    # ----- NO RECOIL -----
+    # ----- NO RECOIL (All possible variations) -----
     'FPPRecoil,FPPRecoil,bool,false,,',
+    'EnableRecoil,EnableRecoil,bool,false,,',
     'FPPRecoilYFactor,FPPRecoilYFactor,float,0.0,,',
     'FPPRecoilZFactor,FPPRecoilZFactor,float,0.0,,',
     'RecoilYCycle,RecoilYCycle,float,0.0,,',
     'RecoilZCycle,RecoilZCycle,float,0.0,,',
     'RecoilBackwardX,RecoilBackwardX,float,0.0,,',
     'RecoilBackwardZ,RecoilBackwardZ,float,0.0,,',
+    'RecoilMultiplier,RecoilMultiplier,float,0.0,,',
+    'RecoilAmount,RecoilAmount,float,0.0,,',
+    'RecoilX,RecoilX,float,0.0,,',
+    'RecoilY,RecoilY,float,0.0,,',
+    'RecoilZ,RecoilZ,float,0.0,,',
 ]
 
 # ============================================================
 # NUKE FUNCTION - Remove unwanted, add missing features
 # ============================================================
 def nuke_and_add(gamevar):
-    """Remove unwanted features and add missing ones (NO RAPID FIRE)"""
+    """Remove unwanted features and add missing ones"""
     
     if not gamevar:
         return gamevar
@@ -95,9 +107,10 @@ def nuke_and_add(gamevar):
         if should_keep:
             cleaned_lines.append(line)
     
-    # Add missing features (Headshot, Damage, No Recoil - NO RAPID FIRE)
-    cleaned_lines.extend(FEATURES_TO_ADD)
-    logging.info(f"Added features: Headshot, Damage, No Recoil (Rapid Fire REMOVED)")
+    # Add missing features
+    for feature in FEATURES_TO_ADD:
+        logging.info(f"Adding: {feature}")
+        cleaned_lines.append(feature)
     
     return '\n'.join(cleaned_lines)
 
@@ -170,20 +183,17 @@ def home():
     </head>
     <body>
     <div class="status">🟢 Proxy Active</div>
-    <div class="info">Nuking unwanted, adding features (NO RAPID FIRE)</div>
+    <div class="info">Nuking unwanted, adding features</div>
     <div class="features">
         <h3 style="color:#fff;">Status:</h3>
         <ul style="list-style:none;padding:0;">
             <li class="removed">❌ Speed, Jump, Back Jump, High Sensitivity</li>
             <li class="removed">❌ Rapid Fire (NUKED)</li>
-            <li class="added">✅ Headshot (HeadShotOnly, HeadShotMultiplier)</li>
-            <li class="added">✅ Damage (DamageMultiplier, DamageRatioHead)</li>
-            <li class="added">✅ No Recoil (FPPRecoil, FPPRecoilYFactor)</li>
-            <li class="kept">✅ Everything else from his config preserved</li>
+            <li class="added">✅ Headshot (All variations)</li>
+            <li class="added">✅ Damage (All variations)</li>
+            <li class="added">✅ No Recoil (All variations)</li>
+            <li class="kept">✅ Everything else preserved</li>
         </ul>
-        <p style="color:#444;font-size:12px;margin-top:20px;">
-            Missing features from dump.cs added | Unwanted features nuked
-        </p>
     </div>
     </body>
     </html>
