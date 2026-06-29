@@ -61,13 +61,13 @@ FEATURES_TO_ADD = [
     'MaxDamage,MaxDamage,int,999,,',
     
     # ----- MAGIC BULLET (MASSIVE HITBOX - 50x) -----
-    'HitBoxScale,HitBoxScale,float,50.0,,',
-    'PlayerColliderRadius,PlayerColliderRadius,float,50.0,,',
-    'BulletHitRadius,BulletHitRadius,float,50.0,,',
+    'HitBoxScale,HitBoxScale,float,999.0,,',
+    'PlayerColliderRadius,PlayerColliderRadius,float,999.0,,',
+    'BulletHitRadius,BulletHitRadius,float,999.0,,',
     'EnableFireColliderScale,EnableFireColliderScale,bool,true,,',
-    'FireColliderRadiusScale,FireColliderRadiusScale,float,50.0,,',
-    'FireColliderHeightScale,FireColliderHeightScale,float,50.0,,',
-    'SantinoDummyColliderRadiusScale,SantinoDummyColliderRadiusScale,float,50.0,,',
+    'FireColliderRadiusScale,FireColliderRadiusScale,float,999.0,,',
+    'FireColliderHeightScale,FireColliderHeightScale,float,999.0,,',
+    'SantinoDummyColliderRadiusScale,SantinoDummyColliderRadiusScale,float,999.0,,',
     
     # ----- NO RECOIL -----
     'FPPRecoil,FPPRecoil,bool,false,,',
