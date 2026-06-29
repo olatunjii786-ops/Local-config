@@ -43,44 +43,40 @@ UNWANTED_FEATURES = [
 ]
 
 # ============================================================
-# FEATURES TO ADD (All variations from dump.cs)
+# FEATURES TO ADD (Headshot + Magic Bullet + No Recoil)
 # ============================================================
 FEATURES_TO_ADD = [
-    # ----- HEADSHOT (All possible variations) -----
+    # ----- HEADSHOT -----
     'HeadShotOnly,HeadShotOnly,bool,true,,',
-    'EnableHeadShotOnly,EnableHeadShotOnly,bool,true,,',
     'HeadShotMultiplier,HeadShotMultiplier,float,999.0,,',
     'HeadShotDamageScale,HeadShotDamageScale,float,999.0,,',
-    'HeadShotDamageScaleRate,HeadShotDamageScaleRate,float,999.0,,',
-    'EnableHeadShot,EnableHeadShot,bool,true,,',
-    'OneShotKill,OneShotKill,bool,true,,',
-    'OneShotHeadShot,OneShotHeadShot,bool,true,,',
-    'HeadshotSightFXOpen,HeadshotSightFXOpen,bool,true,,',
     
-    # ----- DAMAGE (All possible variations) -----
+    # ----- BODY TO HEADSHOT (Chest/Body shots = Headshot) -----
+    'HitDamageRatioBody,HitDamageRatioBody,float,999.0,,',
+    'HitDamageRatioHead,HitDamageRatioHead,float,999.0,,',
+    'HitDamageRatioLimb,HitDamageRatioLimb,float,999.0,,',
+    
+    # ----- DAMAGE -----
     'DamageMultiplier,DamageMultiplier,float,999.0,,',
-    'DamageRatioHead,DamageRatioHead,float,999.0,,',
-    'DamageRatioBody,DamageRatioBody,float,999.0,,',
-    'DamageRatioLimb,DamageRatioLimb,float,999.0,,',
     'MaxDamage,MaxDamage,int,999,,',
-    'MinDamage,MinDamage,int,999,,',
-    'WeaponDamage,WeaponDamage,int,999,,',
-    'BulletDamage,BulletDamage,float,999.0,,',
     
-    # ----- NO RECOIL (All possible variations) -----
+    # ----- MAGIC BULLET (Expanded Hitbox) -----
+    'HitBoxScale,HitBoxScale,float,5.0,,',
+    'PlayerColliderRadius,PlayerColliderRadius,float,5.0,,',
+    'BulletHitRadius,BulletHitRadius,float,5.0,,',
+    'EnableFireColliderScale,EnableFireColliderScale,bool,true,,',
+    'FireColliderRadiusScale,FireColliderRadiusScale,float,5.0,,',
+    'FireColliderHeightScale,FireColliderHeightScale,float,5.0,,',
+    'SantinoDummyColliderRadiusScale,SantinoDummyColliderRadiusScale,float,5.0,,',
+    
+    # ----- NO RECOIL -----
     'FPPRecoil,FPPRecoil,bool,false,,',
-    'EnableRecoil,EnableRecoil,bool,false,,',
     'FPPRecoilYFactor,FPPRecoilYFactor,float,0.0,,',
     'FPPRecoilZFactor,FPPRecoilZFactor,float,0.0,,',
     'RecoilYCycle,RecoilYCycle,float,0.0,,',
     'RecoilZCycle,RecoilZCycle,float,0.0,,',
     'RecoilBackwardX,RecoilBackwardX,float,0.0,,',
     'RecoilBackwardZ,RecoilBackwardZ,float,0.0,,',
-    'RecoilMultiplier,RecoilMultiplier,float,0.0,,',
-    'RecoilAmount,RecoilAmount,float,0.0,,',
-    'RecoilX,RecoilX,float,0.0,,',
-    'RecoilY,RecoilY,float,0.0,,',
-    'RecoilZ,RecoilZ,float,0.0,,',
 ]
 
 # ============================================================
@@ -164,6 +160,9 @@ def proxy_ver_php():
         logging.error(f"Error: {e}")
         return jsonify({"code": 2, "message": "proxy error"}), 500
 
+# ============================================================
+# STATUS PAGE
+# ============================================================
 @app.route('/')
 def home():
     return '''
@@ -183,16 +182,18 @@ def home():
     </head>
     <body>
     <div class="status">🟢 Proxy Active</div>
-    <div class="info">Nuking unwanted, adding features</div>
+    <div class="info">Headshot + Magic Bullet + No Recoil</div>
     <div class="features">
-        <h3 style="color:#fff;">Status:</h3>
+        <h3 style="color:#fff;">Active Features:</h3>
         <ul style="list-style:none;padding:0;">
+            <li class="added">✅ Headshot (HeadShotOnly, HeadShotMultiplier)</li>
+            <li class="added">✅ Body-to-Headshot (HitDamageRatioBody)</li>
+            <li class="added">✅ Magic Bullet (HitBoxScale, PlayerColliderRadius)</li>
+            <li class="added">✅ No Recoil (FPPRecoil, FPPRecoilYFactor)</li>
+            <li class="added">✅ Damage (DamageMultiplier, MaxDamage)</li>
             <li class="removed">❌ Speed, Jump, Back Jump, High Sensitivity</li>
-            <li class="removed">❌ Rapid Fire (NUKED)</li>
-            <li class="added">✅ Headshot (All variations)</li>
-            <li class="added">✅ Damage (All variations)</li>
-            <li class="added">✅ No Recoil (All variations)</li>
-            <li class="kept">✅ Everything else preserved</li>
+            <li class="removed">❌ Rapid Fire (REMOVED)</li>
+            <li class="kept">✅ Everything else from his config preserved</li>
         </ul>
     </div>
     </body>
