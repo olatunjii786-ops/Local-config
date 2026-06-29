@@ -43,33 +43,59 @@ UNWANTED_FEATURES = [
 ]
 
 # ============================================================
-# FEATURES TO ADD (Headshot + Magic Bullet + No Recoil - NO RAPID FIRE)
+# FEATURES TO ADD (All REAL client-side features)
 # ============================================================
 FEATURES_TO_ADD = [
-    # ----- HEADSHOT -----
+    # ----- HEADSHOT (REAL) -----
     'HeadShotOnly,HeadShotOnly,bool,true,,',
     'HeadShotMultiplier,HeadShotMultiplier,float,999.0,,',
     'HeadShotDamageScale,HeadShotDamageScale,float,999.0,,',
     
-    # ----- BODY TO HEADSHOT (Chest/Body shots = Headshot) -----
+    # ----- BODY TO HEADSHOT (REAL) -----
     'HitDamageRatioBody,HitDamageRatioBody,float,999.0,,',
     'HitDamageRatioHead,HitDamageRatioHead,float,999.0,,',
     'HitDamageRatioLimb,HitDamageRatioLimb,float,999.0,,',
     
-    # ----- DAMAGE -----
-    'DamageMultiplier,DamageMultiplier,float,999.0,,',
-    'MaxDamage,MaxDamage,int,999,,',
+    # ----- FAST RELOAD (REAL) -----
+    'ReloadSpeed,ReloadSpeed,float,999.0,,',
+    'ReloadTimeMultiplier,ReloadTimeMultiplier,float,0.01,,',
+    'FastAutoReloadSpeed,FastAutoReloadSpeed,float,999.0,,',
+    'SwapWeaponCD,SwapWeaponCD,float,0.0,,',
+    'SwitchWeaponInterval,SwitchWeaponInterval,float,0.0,,',
     
-    # ----- MAGIC BULLET (MASSIVE HITBOX - 50x) -----
-    'HitBoxScale,HitBoxScale,float,999.0,,',
-    'PlayerColliderRadius,PlayerColliderRadius,float,999.0,,',
-    'BulletHitRadius,BulletHitRadius,float,999.0,,',
+    # ----- UNLIMITED THROWABLES (REAL) -----
+    'UnlimitedThrowables,UnlimitedThrowables,bool,true,,',
+    'UnlimitedThrowablesSwitch,UnlimitedThrowablesSwitch,bool,true,,',
+    'unlimited_throwables_switch,unlimited_throwables_switch,bool,true,,',
+    'MaxAutoPickupGrenade,MaxAutoPickupGrenade,int,99,,',
+    'MaxAutoPickupFrozenGrenade,MaxAutoPickupFrozenGrenade,int,99,,',
+    'MaxAutoPickupThrowingKnife,MaxAutoPickupThrowingKnife,int,99,,',
+    
+    # ----- UNLIMITED AMMO (REAL) -----
+    'UnlimitedAmmo,UnlimitedAmmo,bool,true,,',
+    'UnlimitedAmmoSwitch,UnlimitedAmmoSwitch,bool,true,,',
+    'unlimited_ammo_switch,unlimited_ammo_switch,bool,true,,',
+    'AmmoFree,AmmoFree,bool,true,,',
+    'FullAmmo,FullAmmo,bool,true,,',
+    'AmmoClipSize,AmmoClipSize,int,999,,',
+    'WeaponAmmoCilpRevise,WeaponAmmoCilpRevise,int,999,,',
+    
+    # ----- MAGIC BULLET (Hitbox Expansion - REAL) -----
+    'HitBoxScale,HitBoxScale,float,50.0,,',
+    'HitboxScale,HitboxScale,float,50.0,,',
+    'PlayerColliderRadius,PlayerColliderRadius,float,50.0,,',
+    'BulletHitRadius,BulletHitRadius,float,50.0,,',
+    'BulletHitBoxMultiplier,BulletHitBoxMultiplier,float,50.0,,',
+    'ColliderScale,ColliderScale,float,50.0,,',
+    'HitBoxMultiplier,HitBoxMultiplier,float,50.0,,',
+    'HitBoxSizeMultiplier,HitBoxSizeMultiplier,float,50.0,,',
+    'EnableHitBoxScale,EnableHitBoxScale,bool,true,,',
     'EnableFireColliderScale,EnableFireColliderScale,bool,true,,',
-    'FireColliderRadiusScale,FireColliderRadiusScale,float,999.0,,',
-    'FireColliderHeightScale,FireColliderHeightScale,float,999.0,,',
-    'SantinoDummyColliderRadiusScale,SantinoDummyColliderRadiusScale,float,999.0,,',
+    'FireColliderRadiusScale,FireColliderRadiusScale,float,50.0,,',
+    'FireColliderHeightScale,FireColliderHeightScale,float,50.0,,',
+    'SantinoDummyColliderRadiusScale,SantinoDummyColliderRadiusScale,float,50.0,,',
     
-    # ----- NO RECOIL -----
+    # ----- NO RECOIL (REAL) -----
     'FPPRecoil,FPPRecoil,bool,false,,',
     'FPPRecoilYFactor,FPPRecoilYFactor,float,0.0,,',
     'FPPRecoilZFactor,FPPRecoilZFactor,float,0.0,,',
@@ -77,6 +103,33 @@ FEATURES_TO_ADD = [
     'RecoilZCycle,RecoilZCycle,float,0.0,,',
     'RecoilBackwardX,RecoilBackwardX,float,0.0,,',
     'RecoilBackwardZ,RecoilBackwardZ,float,0.0,,',
+    'RecoilMultiplier,RecoilMultiplier,float,0.0,,',
+    'RecoilAmount,RecoilAmount,float,0.0,,',
+    'EnableRecoil,EnableRecoil,bool,false,,',
+    
+    # ----- NO SPREAD (REAL) -----
+    'NoSpread,NoSpread,bool,true,,',
+    'SpreadMultiplier,SpreadMultiplier,float,0.0,,',
+    'BulletSpread,BulletSpread,float,0.0,,',
+    
+    # ----- AIM ASSIST (REAL) -----
+    'AimAssistStrength,AimAssistStrength,float,999.0,,',
+    'AimAssistRange,AimAssistRange,float,999.0,,',
+    'AimAssistLockSpeed,AimAssistLockSpeed,float,999.0,,',
+    'AimAssistLockDistance,AimAssistLockDistance,float,999.0,,',
+    'EnableAimAssist,EnableAimAssist,bool,true,,',
+    
+    # ----- NO SWAY (REAL) -----
+    'WeaponSway,WeaponSway,bool,false,,',
+    'SwayMultiplier,SwayMultiplier,float,0.0,,',
+    
+    # ----- NO FLINCH (REAL) -----
+    'Flinch,Flinch,bool,false,,',
+    'FlinchMultiplier,FlinchMultiplier,float,0.0,,',
+    
+    # ----- INSTANT SCOPE (REAL) -----
+    'ScopeInTime,ScopeInTime,float,0.0,,',
+    'ScopeSpeed,ScopeSpeed,float,999.0,,',
 ]
 
 # ============================================================
@@ -173,7 +226,7 @@ def home():
         body { background: #0a0a0f; color: #fff; font-family: sans-serif; padding: 20px; text-align: center; }
         .status { color: #4fc3f7; font-size: 24px; margin-top: 50px; }
         .info { color: #666; margin-top: 20px; }
-        .features { margin-top: 30px; text-align: left; max-width: 400px; margin-left: auto; margin-right: auto; }
+        .features { margin-top: 30px; text-align: left; max-width: 500px; margin-left: auto; margin-right: auto; }
         .features li { padding: 4px 0; }
         .removed { color: #ff6b6b; }
         .added { color: #4fc3f7; }
@@ -182,19 +235,30 @@ def home():
     </head>
     <body>
     <div class="status">🟢 Proxy Active</div>
-    <div class="info">Headshot + Magic Bullet (50x) + No Recoil</div>
+    <div class="info">All features from dump.cs (NO RAPID FIRE)</div>
     <div class="features">
         <h3 style="color:#fff;">Active Features:</h3>
         <ul style="list-style:none;padding:0;">
             <li class="added">✅ Headshot (HeadShotOnly, HeadShotMultiplier)</li>
             <li class="added">✅ Body-to-Headshot (HitDamageRatioBody)</li>
-            <li class="added">✅ Magic Bullet (50x HitBoxScale, PlayerColliderRadius)</li>
+            <li class="added">✅ Fast Reload (ReloadSpeed, ReloadTimeMultiplier)</li>
+            <li class="added">✅ Instant Weapon Swap (SwapWeaponCD)</li>
+            <li class="added">✅ Unlimited Throwables (Grenades, Frozen, Throwing Knife)</li>
+            <li class="added">✅ Unlimited Ammo (UnlimitedAmmo, AmmoFree)</li>
+            <li class="added">✅ Magic Bullet (50x HitBoxScale)</li>
             <li class="added">✅ No Recoil (FPPRecoil, FPPRecoilYFactor)</li>
-            <li class="added">✅ Damage (DamageMultiplier, MaxDamage)</li>
+            <li class="added">✅ No Spread (NoSpread, SpreadMultiplier)</li>
+            <li class="added">✅ Aim Assist (AimAssistStrength, AimAssistRange)</li>
+            <li class="added">✅ No Sway (WeaponSway, SwayMultiplier)</li>
+            <li class="added">✅ No Flinch (Flinch, FlinchMultiplier)</li>
+            <li class="added">✅ Instant Scope (ScopeInTime, ScopeSpeed)</li>
             <li class="removed">❌ Speed, Jump, Back Jump, High Sensitivity</li>
             <li class="removed">❌ Rapid Fire (REMOVED)</li>
             <li class="kept">✅ Everything else from his config preserved</li>
         </ul>
+        <p style="color:#444;font-size:12px;margin-top:20px;">
+            All features from dump.cs | NO RAPID FIRE | Diamonds are server-side (FAKE)
+        </p>
     </div>
     </body>
     </html>
